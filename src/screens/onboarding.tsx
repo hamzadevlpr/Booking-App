@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -6,207 +6,274 @@ import {
   Dimensions,
   ImageBackground,
   FlatList,
-  ListRenderItem,
-  TouchableOpacity,
   StatusBar,
-  ViewToken,
+  Animated,
+  TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../App';
 
+import OnBoardOne from '../assets/images/onboard1.jpg';
+import OnBoardTwo from '../assets/images/onboard2.jpg';
+import OnBoardThree from '../assets/images/onboard3.jpg';
+
 const { width, height } = Dimensions.get('window');
 
-// Temporary remote images; replace with local assets when available
 const slides = [
   {
     key: '1',
     title: 'Luxury and Comfort,\nJust a Tap Away',
-    subtitle:
-      'Semper in cursus magna et at varius nunc adipiscing. Elementum justo, laoreet id sem.',
-    image:
-      'https://images.unsplash.com/photo-1562790351-d273a961e0e9?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    cta: 'Continue',
+    subtitle: 'Discover the best hotels tailored to your preferences. Experience luxury and comfort like never before.',
+    image: OnBoardOne,
   },
   {
     key: '2',
-    title: 'Book with Ease, Stay\nwith Style',
-    subtitle:
-      'Semper in cursus magna et at varius nunc adipiscing. Elementum justo, laoreet id sem.',
-    image:
-      'https://images.unsplash.com/photo-1703578531200-5c0dcbdbef5b?q=80&w=737&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    cta: 'Continue',
+    title: 'Book with Ease,\nStay with Style',
+    subtitle: 'Enjoy seamless booking experience with our user-friendly app. Find your perfect stay in just a few taps.',
+    image: OnBoardTwo,
   },
   {
     key: '3',
     title: 'Discover Your Dream\nHotel, Effortlessly',
-    subtitle:
-      'Lorem ipsum is simply dummy text of the printing and typesetting industry.',
-    image:
-      'https://plus.unsplash.com/premium_photo-1675745329954-9639d3b74bbf?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    cta: 'Get Started',
+    subtitle: 'Explore a world of hotels at your fingertips. Find the perfect stay that matches your style and budget.',
+    image: OnBoardThree,
   },
-] as const;
+];
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Onboarding'>;
 
-const DOT_SIZE = 6;
-const ACTIVE_DOT_WIDTH = 18;
+const AUTO_SCROLL_INTERVAL = 3000;
 const PRIMARY = '#2853AF';
 
 const OnboardingScreen = ({ navigation }: Props) => {
   const insets = useSafeAreaInsets();
-  const [index, setIndex] = useState(0);
   const listRef = useRef<FlatList>(null);
+  const [index, setIndex] = useState(0);
 
-  const onNext = () => {
-    if (index < slides.length - 1) {
-      const next = index + 1;
-      listRef.current?.scrollToIndex({ index: next, animated: true });
-      setIndex(next);
-    } else {
-      navigation.replace('Home');
+  // fade animation for text
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  // Auto scroll
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const nextIndex = index === slides.length - 1 ? 0 : index + 1;
+      listRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+    }, AUTO_SCROLL_INTERVAL);
+
+    return () => clearInterval(timer);
+  }, [index]);
+
+  // Fade in text when index changes
+  useEffect(() => {
+    fadeAnim.setValue(0);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, [index]);
+
+  const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
+    if (viewableItems.length > 0) {
+      setIndex(viewableItems[0].index);
     }
-  };
+  }).current;
 
-  const renderItem: ListRenderItem<(typeof slides)[number]> = ({ item }) => (
-    <ImageBackground
-      source={{ uri: item.image }}
-      style={styles.slide}
-      resizeMode="cover"
-    >
+  const renderItem = ({ item }: any) => (
+    <ImageBackground source={item.image} style={styles.slide}>
       <LinearGradient
-        colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.45)", "rgba(0,0,0,0.85)"]}
+        colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
         style={StyleSheet.absoluteFill}
       />
-      <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 20) }]}>        
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.subtitle}>{item.subtitle}</Text>
-        <Paginator currentIndex={index} total={slides.length} />
-        <TouchableOpacity onPress={onNext} activeOpacity={0.8} style={styles.cta}>
-          <Text style={styles.ctaText}>{item.cta}</Text>
-        </TouchableOpacity>
-        {item.key === '3' && (
-          <View style={styles.footerRow}>
-            <Text style={styles.footerText}>Don’t have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-              <Text style={styles.link}>Register</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+
+      {/* Bottom to middle overlay */}
+      <LinearGradient
+        colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.85)', 'rgba(0,0,0,0.95)']}
+        locations={[0, 0.5, 1]}
+        style={styles.bottomOverlay}
+      />
+
+      <View style={styles.textContainer}>
+        <Animated.Text style={[styles.title, { opacity: fadeAnim }]}>
+          {item.title}
+        </Animated.Text>
+
+        <Animated.Text style={[styles.subtitle, { opacity: fadeAnim }]}>
+          {item.subtitle}
+        </Animated.Text>
       </View>
     </ImageBackground>
   );
 
-  const onViewableItemsChanged = useRef(
-    ({ viewableItems }: { viewableItems: Array<ViewToken<(typeof slides)[number]>> }) => {
-      const i = viewableItems?.[0]?.index ?? 0;
-      if (typeof i === 'number') setIndex(i);
-    },
-  ).current;
-
-  const viewabilityConfig = useMemo(
-    () => ({ viewAreaCoveragePercentThreshold: 60 }),
-    [],
-  );
+  const onNext = () => {
+    if (index === slides.length - 1) {
+      navigation.replace('Home');
+    } else {
+      listRef.current?.scrollToIndex({ index: index + 1, animated: true });
+    }
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
+
       <FlatList
         ref={listRef}
         data={slides}
-        keyExtractor={(it) => it.key}
         renderItem={renderItem}
+        keyExtractor={(item) => item.key}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={viewabilityConfig}
+        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 60 }}
       />
+
+      {/* PAGINATION DOTS */}
+      <View style={styles.paginatorContainer}>
+        <Paginator currentIndex={index} total={slides.length} />
+      </View>
+
+      {/* FIXED BOTTOM AREA */}
+      <View style={[styles.fixedBottom, { paddingBottom: insets.bottom + 16 }]}>
+        <TouchableOpacity style={styles.cta} onPress={onNext}>
+          <Text style={styles.ctaText}>
+            {index === slides.length - 1 ? 'Get Started' : 'Continue'}
+          </Text>
+        </TouchableOpacity>
+
+        {index === slides.length - 1 && (
+          <Text
+            style={{
+              color: '#fff',
+              textAlign: 'center',
+              fontFamily: "Poppins-Light",
+              marginTop: 12,
+              fontSize: 14,
+            }}
+          >
+            Don’t have an account?
+            <Text
+              style={{ fontFamily: "Poppins-Bold", textDecorationLine: 'underline' }}
+              onPress={() => navigation.replace('SignUp')}
+            > Sign Up
+            </Text>
+          </Text>
+        )}
+      </View>
     </View>
   );
 };
 
 const Paginator = ({ currentIndex, total }: { currentIndex: number; total: number }) => {
+  const animatedWidths = useRef(
+    Array.from({ length: total }, () => new Animated.Value(6))
+  ).current;
+
+  useEffect(() => {
+    animatedWidths.forEach((width, i) => {
+      Animated.timing(width, {
+        toValue: currentIndex === i ? 18 : 6,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    });
+  }, [currentIndex]);
+
   return (
     <View style={styles.dotsRow}>
-      {Array.from({ length: total }).map((_, i) => {
-        const active = i === currentIndex;
-        return (
-          <View
-            key={i}
-            style={[
-              styles.dot,
-              active ? styles.activeDot : null,
-            ]}
-          />
-        );
-      })}
+      {Array.from({ length: total }).map((_, i) => (
+        <Animated.View
+          key={i}
+          style={[
+            styles.dot,
+            { width: animatedWidths[i] },
+            currentIndex === i && styles.activeDot,
+          ]}
+        />
+      ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
+  container: { flex: 1 },
   slide: { width, height },
-  bottom: {
+
+  bottomOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: height * 0.6,
+  },
+
+  textContainer: {
+    position: 'absolute',
+    bottom: 200,
+    left: 20,
+    right: 20,
+  },
+
+  title: {
+    color: '#fff',
+    fontSize: 26,
+    lineHeight: 32,
+    fontFamily: "Poppins-ExtraBold",
+    textAlign: 'center',
+  },
+  subtitle: {
+    marginTop: 12,
+    color: 'rgba(255,255,255,0.85)',
+    fontFamily: "Poppins-Medium",
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+
+  paginatorContainer: {
+    position: 'absolute',
+    bottom: 160,
+    left: 20,
+    right: 20,
+  },
+
+  fixedBottom: {
     position: 'absolute',
     left: 20,
     right: 20,
     bottom: 0,
   },
-  title: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: '800',
-    lineHeight: 30,
-  },
-  subtitle: {
-    color: 'rgba(255,255,255,0.85)',
-    marginTop: 12,
-    fontSize: 13,
-    lineHeight: 18,
-  },
+
   dotsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
     gap: 6,
-    marginTop: 18,
   },
   dot: {
-    width: DOT_SIZE,
-    height: DOT_SIZE,
-    borderRadius: DOT_SIZE / 2,
-    backgroundColor: 'rgba(255,255,255,0.6)',
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'white',
   },
   activeDot: {
-    width: ACTIVE_DOT_WIDTH,
-    backgroundColor: '#fff',
-    borderRadius: DOT_SIZE / 2,
+    backgroundColor: '#2853AF',
   },
+
   cta: {
-    marginTop: 18,
     backgroundColor: PRIMARY,
-    borderRadius: 10,
     height: 52,
-    alignItems: 'center',
+    borderRadius: 10,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   ctaText: {
     color: '#fff',
+    fontFamily: "Poppins-Bold",
     fontSize: 16,
-    fontWeight: '700',
   },
-  footerRow: {
-    marginTop: 14,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footerText: { color: 'rgba(255,255,255,0.8)' },
-  link: { color: '#92B3FF' },
 });
 
 export default OnboardingScreen;
