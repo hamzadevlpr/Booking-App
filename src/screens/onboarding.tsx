@@ -109,7 +109,7 @@ const OnboardingScreen = ({ navigation }: Props) => {
 
   const onNext = () => {
     if (index === slides.length - 1) {
-      navigation.replace('Home');
+      navigation.replace('Main');
     } else {
       listRef.current?.scrollToIndex({ index: index + 1, animated: true });
     }
@@ -143,25 +143,22 @@ const OnboardingScreen = ({ navigation }: Props) => {
             {index === slides.length - 1 ? 'Get Started' : 'Continue'}
           </Text>
         </TouchableOpacity>
-
-        {index === slides.length - 1 && (
+        <Text
+          style={{
+            color: '#fff',
+            textAlign: 'center',
+            fontFamily: "Poppins-Light",
+            marginTop: 12,
+            fontSize: 14,
+          }}
+        >
+          Don’t have an account?
           <Text
-            style={{
-              color: '#fff',
-              textAlign: 'center',
-              fontFamily: "Poppins-Light",
-              marginTop: 12,
-              fontSize: 14,
-            }}
-          >
-            Don’t have an account?
-            <Text
-              style={{ fontFamily: "Poppins-Bold", textDecorationLine: 'underline' }}
-              onPress={() => navigation.replace('SignUp')}
-            > Sign Up
-            </Text>
+            style={{ fontFamily: "Poppins-Bold", textDecorationLine: 'underline' }}
+            onPress={() => navigation.navigate('SignUp')}
+          > Sign Up
           </Text>
-        )}
+        </Text>
       </View>
     </View>
   );
