@@ -44,8 +44,8 @@ const SVG_ICONS: Record<
 const TabIcon = ({ tab, focused }: { tab: keyof BottomTabParamList; focused: boolean }) => {
   const IconComponent = focused ? SVG_ICONS[tab].filled : SVG_ICONS[tab].default;
   return (
-    <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-      <IconComponent width={22} height={22} fill={focused ? PRIMARY : '#9CA3AF'} />
+    <View style={[styles.iconWrap]}>
+      <IconComponent width={26} height={26} fill='transparent' />
     </View>
   );
 };
@@ -107,15 +107,10 @@ export default BottomTabNavigator;
 
 const styles = StyleSheet.create({
   iconWrap: {
-    width: 36,
-    height: 36,
+    width: 43,
+    height: 43,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  iconWrapActive: {
-    backgroundColor: '#E9F0FF',
-    borderWidth: 1,
-    borderColor: '#D7E5FF',
-  },
+  }
 });

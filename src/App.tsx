@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { StatusBar, View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Screens
-import OnboardingScreen from './screens/onboarding';
-import SignUpScreen from './screens/auth/signup';
-import SignInScreen from './screens/auth/signin';
 import ForgetScreen from './screens/auth/forget';
 import OTPScreen from './screens/auth/otp';
 import ResetScreen from './screens/auth/reset';
+import SignInScreen from './screens/auth/signin';
+import SignUpScreen from './screens/auth/signup';
+import OnboardingScreen from './screens/onboarding';
 
 // Bottom Tabs
 import BottomTabNavigator from './navigation/BottomTabNavigator';
@@ -22,31 +22,19 @@ export type RootStackParamList = {
   Forget: undefined;
   Reset: undefined;
   OTP: undefined;
-  Main: undefined; 
+  Main: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-        <ActivityIndicator size="large" color="#2853AF" />
-        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      </View>
-    );
-  }
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle="dark-content" backgroundColor="#F2F3F7" />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#ffffff" 
+      />
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {/* Onboarding / Auth Flow */}

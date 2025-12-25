@@ -73,7 +73,7 @@ const OnboardingScreen = ({ navigation }: Props) => {
       duration: 500,
       useNativeDriver: true,
     }).start();
-  }, [index]);
+  }, [fadeAnim, index]);
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
@@ -144,6 +144,7 @@ const OnboardingScreen = ({ navigation }: Props) => {
           </Text>
         </TouchableOpacity>
         <Text
+          // eslint-disable-next-line react-native/no-inline-styles
           style={{
             color: '#fff',
             textAlign: 'center',
@@ -154,6 +155,7 @@ const OnboardingScreen = ({ navigation }: Props) => {
         >
           Don’t have an account?
           <Text
+            // eslint-disable-next-line react-native/no-inline-styles
             style={{ fontFamily: "Poppins-Bold", textDecorationLine: 'underline' }}
             onPress={() => navigation.navigate('SignUp')}
           > Sign Up
@@ -177,7 +179,7 @@ const Paginator = ({ currentIndex, total }: { currentIndex: number; total: numbe
         useNativeDriver: false,
       }).start();
     });
-  }, [currentIndex]);
+  }, [animatedWidths, currentIndex]);
 
   return (
     <View style={styles.dotsRow}>

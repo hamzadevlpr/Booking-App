@@ -10,8 +10,11 @@ import {
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
+import { recommended } from '../../utiles';
+import MapCard from '../../components/MapCard';
 
 const PRIMARY = '#2853AF';
 
@@ -47,19 +50,29 @@ const popularSpots = [
 
 const categories = [
   { id: 'all', label: 'All', icon: 'apps', active: true },
-  { id: 'villas', label: 'Villas', icon: 'home-city-outline' },
-  { id: 'hotels', label: 'Hotels', icon: 'office-building-outline' },
-  { id: 'apt', label: 'Apartments', icon: 'home-outline' },
-];
 
-const recommended = {
-  title: 'Serenity Sands',
-  location: 'Honolulu, HI',
-  price: '$270 /night',
-  rating: '4.0',
-  image:
-    'https://images.unsplash.com/photo-1501117716987-c8e1ecb210af?auto=format&fit=crop&w=800&q=80',
-};
+  // Core stays
+  { id: 'hotels', label: 'Hotels', icon: 'office-building-outline' },
+  { id: 'villas', label: 'Villas', icon: 'home-city-outline' },
+  { id: 'apt', label: 'Apartments', icon: 'home-outline' },
+
+  // Popular hotel services
+  { id: 'resorts', label: 'Resorts', icon: 'beach' },
+  { id: 'luxury', label: 'Luxury', icon: 'diamond-stone' },
+  { id: 'budget', label: 'Budget', icon: 'cash-multiple' },
+  { id: 'family', label: 'Family', icon: 'account-group-outline' },
+  { id: 'business', label: 'Business', icon: 'briefcase-outline' },
+
+  // Experience-based
+  { id: 'spa', label: 'Spa', icon: 'spa-outline' },
+  { id: 'pool', label: 'Pool', icon: 'pool' },
+  { id: 'beachfront', label: 'Beachfront', icon: 'umbrella-beach' },
+
+  // Amenities
+  { id: 'wifi', label: 'Free Wi-Fi', icon: 'wifi' },
+  { id: 'parking', label: 'Parking', icon: 'parking' },
+  { id: 'breakfast', label: 'Breakfast', icon: 'food-outline' },
+];
 
 const HomeScreen = () => {
   return (
@@ -155,44 +168,61 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.filtersRow}>
-          {categories.map((cat) => (
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersRow}
+          renderItem={({ item }) => (
             <TouchableOpacity
-              key={cat.id}
-              style={[styles.filterChip, cat.active && styles.filterChipActive]}
+              style={[styles.filterChip, item.active && styles.filterChipActive]}
               activeOpacity={0.8}
             >
               <Icon
-                name={cat.icon}
+                name={item.icon}
                 size={16}
-                color={cat.active ? '#fff' : '#8C95A8'}
-                style={{ marginRight: 6 }}
+                color={item.active ? '#fff' : '#8C95A8'}
               />
-              <Text style={[styles.filterText, cat.active && styles.filterTextActive]}>{cat.label}</Text>
+              <Text style={[styles.filterText, item.active && styles.filterTextActive]}>
+                {item.label}
+              </Text>
             </TouchableOpacity>
-          ))}
-        </View>
+          )}
+        />
 
-        <View style={styles.recoCard}>
-          <Image source={{ uri: recommended.image }} style={styles.recoImage} />
-          <View style={{ flex: 1, paddingHorizontal: 14 }}>
-            <Text style={styles.recoTitle}>{recommended.title}</Text>
-            <View style={styles.recoLocationRow}>
-              <Icon name="map-marker" size={14} color="#8C95A8" />
-              <Text style={styles.recoLocation}>{recommended.location}</Text>
-            </View>
-            <View style={styles.recoFooter}>
-              <Text style={styles.recoPrice}>{recommended.price}</Text>
-              <View style={styles.recoRating}>
-                <Icon name="star" size={14} color="#FFB800" />
-                <Text style={styles.recoRatingText}>{recommended.rating}</Text>
+        <FlatList
+          data={recommended}
+          keyExtractor={(item) => item.id}
+          scrollEnabled={false}
+          renderItem={({ item }) => (
+            <View style={[styles.recoCard]}>
+              <Image source={{ uri: item.image }} style={styles.recoImage} />
+              <View style={styles.recommendedContent}>
+                <Text style={styles.recoTitle}>{item.title}</Text>
+                <View style={styles.recoLocationRow}>
+                  <EvilIcons name="location" size={18} color="#8C95A8" />
+                  <Text style={styles.recoLocation}>{item.location}</Text>
+                </View>
+                <View style={styles.recoFooter}>
+                  <Text style={styles.recoPrice}>{item.price}</Text>
+                  <View style={styles.recoRating}>
+                    <Icon name="star" size={14} color="#FFB800" />
+                    <Text style={styles.recoRatingText}>{item.rating}</Text>
+                  </View>
+                </View>
               </View>
             </View>
-          </View>
-          <TouchableOpacity style={styles.moreBtn}>
-            <Icon name="dots-vertical" size={18} color="#C3C7D5" />
-          </TouchableOpacity>
-        </View>
+          )}
+        />
+
+        {/* Map Card */}
+        <MapCard
+          latitude={21.282778}
+          longitude={-157.829444}
+          title="Serenity Sands"
+          location="Honolulu, HI"
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -360,6 +390,8 @@ const styles = StyleSheet.create({
   filterChip: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
     borderWidth: 1,
     borderColor: '#E3E6EE',
     borderRadius: 10,
@@ -382,20 +414,21 @@ const styles = StyleSheet.create({
   recoCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     borderRadius: 14,
     padding: 12,
     marginTop: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
+    marginBottom: 6,
+    borderBottomColor: '#E5E7EB',
+    borderBottomWidth: 2,
   },
   recoImage: {
     width: 90,
     height: 90,
     borderRadius: 12,
+  },
+  recommendedContent: {
+    flex: 1,
+    marginLeft: 12,
   },
   recoTitle: {
     fontSize: 14,
@@ -421,7 +454,7 @@ const styles = StyleSheet.create({
   },
   recoPrice: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Poppins-Medium',
     color: PRIMARY,
   },
   recoRating: {
