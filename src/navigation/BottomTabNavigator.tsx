@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeScreen from '../screens/home/home';
 import BookingScreen from '../screens/home/booking';
 import MessageScreen from '../screens/home/message';
-import ProfileScreen from '../screens/home/booking copy 2';
 
 // SVG Icons
 import HomeIcon from '../assets/icons/home.svg';
@@ -18,6 +17,7 @@ import MessageIcon from '../assets/icons/chat.svg';
 import MessageFillIcon from '../assets/icons/chat-fill.svg';
 import ProfileIcon from '../assets/icons/user.svg';
 import ProfileFillIcon from '../assets/icons/user-fill.svg';
+import ProfileScreen from '../screens/home/prodile';
 
 const PRIMARY = '#2853AF';
 

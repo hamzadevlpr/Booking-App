@@ -1,18 +1,19 @@
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
+  FlatList,
   Image,
   ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  FlatList,
+  View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import MapView from 'react-native-maps';
 import LinearGradient from 'react-native-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { recommended } from '../../utiles';
 import MapCard from '../../components/MapCard';
 
@@ -173,7 +174,6 @@ const HomeScreen = () => {
           keyExtractor={(item) => item.id}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersRow}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={[styles.filterChip, item.active && styles.filterChipActive]}
@@ -218,11 +218,12 @@ const HomeScreen = () => {
 
         {/* Map Card */}
         <MapCard
-          latitude={21.282778}
-          longitude={-157.829444}
-          title="Serenity Sands"
-          location="Honolulu, HI"
+          latitude={24.8578194}
+          longitude={67.0107154}
+          title="My Location"
+          location="San Francisco, CA"
         />
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -381,11 +382,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 12,
     gap: 4,
-  },
-  filtersRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
   },
   filterChip: {
     flexDirection: 'row',
