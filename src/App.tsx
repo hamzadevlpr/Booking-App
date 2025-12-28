@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Screens
@@ -14,6 +14,7 @@ import OnboardingScreen from './screens/onboarding';
 
 // Bottom Tabs
 import BottomTabNavigator from './navigation/BottomTabNavigator';
+import MapExploreScreen from './screens/MapExploreScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -23,17 +24,19 @@ export type RootStackParamList = {
   Reset: undefined;
   OTP: undefined;
   Main: undefined;
+  MapExplore: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
+  const isDarkMode = useColorScheme() === 'dark';
 
   return (
     <SafeAreaProvider>
       <StatusBar
-        barStyle="dark-content"
-        backgroundColor="#ffffff" 
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={isDarkMode ? '#000' : '#fff'}
       />
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -47,6 +50,7 @@ const App = () => {
 
           {/* Main App */}
           <Stack.Screen name="Main" component={BottomTabNavigator} />
+          <Stack.Screen name="MapExplore" component={MapExploreScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

@@ -1,4 +1,5 @@
-import React from 'react';
+import Geolocation from '@react-native-community/geolocation';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -9,13 +10,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MapView from 'react-native-maps';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { recommended } from '../../utiles';
 import MapCard from '../../components/MapCard';
+import { requestLocationPermission } from '../../helper/requestLocationPermission ';
+import { recommended } from '../../utiles';
 
 const PRIMARY = '#2853AF';
 
@@ -75,7 +76,40 @@ const categories = [
   { id: 'breakfast', label: 'Breakfast', icon: 'food-outline' },
 ];
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: any) => {
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [hasPermission, setHasPermission] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const granted = await requestLocationPermission();
+      setHasPermission(granted);
+      setChecked(true);
+
+      if (granted) {
+        Geolocation.getCurrentPosition(
+          position => {
+            const { latitude, longitude } = position.coords;
+            setUserLocation({ latitude, longitude });
+          },
+          error => {
+            console.log('Location error:', error);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 10000,
+          }
+        );
+      }
+    })();
+  }, []);
+
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -215,14 +249,26 @@ const HomeScreen = () => {
             </View>
           )}
         />
-
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Hotel Near You</Text>
+          <TouchableOpacity onPress={() => navigation?.navigate('MapExplore')}>
+            <Text style={styles.sectionLink}>Open Map</Text>
+          </TouchableOpacity>
+        </View>
         {/* Map Card */}
-        <MapCard
-          latitude={24.8578194}
-          longitude={67.0107154}
-          title="My Location"
-          location="San Francisco, CA"
-        />
+        {hasPermission && userLocation ? (
+          <MapCard
+            latitude={userLocation.latitude}
+            longitude={userLocation.longitude}
+            title="My Location"
+            location="Nearby stays"
+          />
+        ) : checked ? (
+          <Text style={{ textAlign: 'center', color: '#8C95A8', marginTop: 10 }}>
+            Location permission is required to show nearby places
+          </Text>
+        ) : null}
+
 
       </ScrollView>
     </SafeAreaView>
