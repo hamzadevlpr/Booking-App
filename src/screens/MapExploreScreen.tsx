@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
     View,
     StyleSheet,
@@ -17,6 +17,7 @@ import ChatIcon from "../assets/icons/message-text.svg"
 import { mockHotels } from '../utiles';
 import SearchBar from '../components/SearchBar';
 import FilterBottomSheet from '../components/FilterBottomSheet';
+import BottomSheet from '@gorhom/bottom-sheet';
 
 const { width, height } = Dimensions.get('window');
 const PRIMARY = '#2853AF';
@@ -25,14 +26,20 @@ const MapExploreScreen = ({ navigation }: any) => {
     const isDarkMode = useColorScheme() === 'dark';
     const [selectedHotel, setSelectedHotel] = useState(mockHotels[0]);
     const [searchText, setSearchText] = useState('');
-    const [isFilterVisible, setIsFilterVisible] = useState(false);
     const flatListRef = useRef<FlatList>(null);
     const mapRef = useRef<MapView>(null);
+
+    const bottomSheetRef = useRef<BottomSheet>(null);
+
+    // callbacks
+    const handleSheetChanges = useCallback((index: number) => {
+        console.log('handleSheetChanges', index);
+    }, []);
 
     const handleMarkerPress = (hotel: typeof mockHotels[0], index: number) => {
         setSelectedHotel(hotel);
         flatListRef.current?.scrollToIndex({ index, animated: true });
-        
+
         mapRef.current?.animateToRegion({
             latitude: hotel.latitude,
             longitude: hotel.longitude,
@@ -46,7 +53,7 @@ const MapExploreScreen = ({ navigation }: any) => {
         const index = Math.round(offsetX / (width - 40 + 20));
         if (mockHotels[index]) {
             setSelectedHotel(mockHotels[index]);
-            
+
             mapRef.current?.animateToRegion({
                 latitude: mockHotels[index].latitude,
                 longitude: mockHotels[index].longitude,
@@ -242,7 +249,10 @@ const MapExploreScreen = ({ navigation }: any) => {
                 </View>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <TouchableOpacity style={[styles.bookingBtn, { flex: 1, marginRight: 8 }]}>
+                <TouchableOpacity
+                    style={[styles.bookingBtn, { flex: 1, marginRight: 8 }]}
+                    onPress={() => navigation.navigate('BookingDetail')}
+                >
                     <Text style={styles.bookingBtnText}>Booking Now</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.messageBtn}>
@@ -306,7 +316,7 @@ const MapExploreScreen = ({ navigation }: any) => {
             <SearchBar
                 searchText={searchText}
                 onSearchChange={setSearchText}
-                onFilterPress={() => setIsFilterVisible(true)}
+                onFilterPress={() => bottomSheetRef.current?.expand()}
             />
 
             {/* Bottom Hotel Card */}
@@ -333,8 +343,8 @@ const MapExploreScreen = ({ navigation }: any) => {
 
             {/* Filter Bottom Sheet */}
             <FilterBottomSheet
-                visible={isFilterVisible}
-                onClose={() => setIsFilterVisible(false)}
+                ref={bottomSheetRef}
+                onClose={() => bottomSheetRef.current?.close()}
             />
         </SafeAreaView>
     );

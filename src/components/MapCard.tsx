@@ -7,8 +7,8 @@ const { width } = Dimensions.get('window');
 type MapCardProps = {
   latitude: number;
   longitude: number;
-  title: string;
-  location: string;
+  title?: string;
+  location?: string;
   image?: string;
 };
 

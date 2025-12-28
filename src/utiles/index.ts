@@ -88,3 +88,52 @@ export const mockHotels = [
     longitude: -117.1450,
   },
 ];
+
+export const mockBookingDetail = {
+  id: '1',
+  name: 'The Aston Villa Hotel',
+  location: {
+    latitude:  52.509,
+    longitude: -1.884,
+    location: 'Rome, NY'
+  },
+  rating: 4.6,
+  image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+  price: 120,
+  address: '9175 Chestnut StreetRome, NY 13440',
+  mapImage: 'https://maps.googleapis.com/maps/api/staticmap?center=Haight+St&zoom=15&size=400x200&key=YOUR_API_KEY',
+  facilities: [
+    { key: 'ac', label: 'Ac', icon: 'air-conditioner' },
+    { key: 'restaurant', label: 'Restaurant', icon: 'silverware-fork-knife' },
+    { key: 'pool', label: 'Swimming Pool', icon: 'pool' },
+    { key: 'frontdesk', label: '24-Hours Front Desk', icon: 'clock-outline' },
+  ],
+  description: 'The ideal place for those looking for a luxurious and tranquil holiday experience with stunning sea views....',
+  reviews: [
+    {
+      id: 'r1',
+      name: 'Kim Borrrdy',
+      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+      rating: 4.5,
+      text: 'Amazing!  The room is good than the picture. Thanks for amazing experience!'
+    },
+    {
+      id: 'r2',
+      name: 'Mirai Kamazuki',
+      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+      rating: 5.0,
+      text: 'The service is on point, and I really like the facilities. Good job!'
+    }
+  ],
+  recommendations: [
+    {
+      id: 'rec1',
+      name: 'Lumière Palace',
+      location: 'Las Vegas, NV',
+      image: 'https://images.unsplash.com/photo-1464983953574-0892a716854b',
+      rating: 4.4,
+      price: 210,
+      oldPrice: 345
+    }
+  ]
+};

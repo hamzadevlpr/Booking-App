@@ -15,6 +15,8 @@ import OnboardingScreen from './screens/onboarding';
 // Bottom Tabs
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import MapExploreScreen from './screens/MapExploreScreen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import BookingDetailScreen from './screens/BookingDetailScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -25,6 +27,7 @@ export type RootStackParamList = {
   OTP: undefined;
   Main: undefined;
   MapExplore: undefined;
+  BookingDetail: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,27 +36,30 @@ const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <SafeAreaProvider>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={isDarkMode ? '#000' : '#fff'}
-      />
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* Onboarding / Auth Flow */}
-          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="Forget" component={ForgetScreen} />
-          <Stack.Screen name="Reset" component={ResetScreen} />
-          <Stack.Screen name="OTP" component={OTPScreen} />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <StatusBar
+          barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+          backgroundColor={isDarkMode ? '#000' : '#fff'}
+        />
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {/* Onboarding / Auth Flow */}
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="Forget" component={ForgetScreen} />
+            <Stack.Screen name="Reset" component={ResetScreen} />
+            <Stack.Screen name="OTP" component={OTPScreen} />
 
-          {/* Main App */}
-          <Stack.Screen name="Main" component={BottomTabNavigator} />
-          <Stack.Screen name="MapExplore" component={MapExploreScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+            {/* Main App */}
+            <Stack.Screen name="Main" component={BottomTabNavigator} />
+            <Stack.Screen name="MapExplore" component={MapExploreScreen} />
+            <Stack.Screen name="BookingDetail" component={BookingDetailScreen} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 };
 
