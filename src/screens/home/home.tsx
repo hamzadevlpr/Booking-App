@@ -17,6 +17,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MapCard from '../../components/MapCard';
 import { requestLocationPermission } from '../../helper/requestLocationPermission ';
 import { recommended } from '../../utiles';
+import SearchIcon from '../../assets/icons/black_search.svg';
+import BellIcon from '../../assets/icons/bell.svg';
 
 const PRIMARY = '#2853AF';
 
@@ -132,10 +134,10 @@ const HomeScreen = ({ navigation }: any) => {
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity style={styles.iconBtn}>
-              <Icon name="magnify" size={20} color="#0F1831" />
+              <SearchIcon width={20} height={20} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconBtn}>
-              <Icon name="bell-outline" size={20} color="#0F1831" />
+              <BellIcon width={20} height={20} />
             </TouchableOpacity>
           </View>
         </View>
@@ -202,24 +204,24 @@ const HomeScreen = ({ navigation }: any) => {
             <Text style={styles.sectionLink}>See All</Text>
           </TouchableOpacity>
         </View>
-
         <FlatList
           data={categories}
           keyExtractor={(item) => item.id}
           horizontal
           showsHorizontalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={[styles.filterChip, item.active && styles.filterChipActive]}
               activeOpacity={0.8}
             >
               <Icon
-                name={item.icon}
-                size={16}
-                color={item.active ? '#fff' : '#8C95A8'}
+          name={item.icon}
+          size={16}
+          color={item.active ? '#fff' : '#8C95A8'}
               />
               <Text style={[styles.filterText, item.active && styles.filterTextActive]}>
-                {item.label}
+          {item.label}
               </Text>
             </TouchableOpacity>
           )}
@@ -229,6 +231,7 @@ const HomeScreen = ({ navigation }: any) => {
           data={recommended}
           keyExtractor={(item) => item.id}
           scrollEnabled={false}
+          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           renderItem={({ item }) => (
             <View style={[styles.recoCard]}>
               <Image source={{ uri: item.image }} style={styles.recoImage} />

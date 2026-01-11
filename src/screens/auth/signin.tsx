@@ -8,6 +8,7 @@ import {
     ScrollView,
     StatusBar,
     Alert,
+    ActivityIndicator,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,6 +17,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LoadingButton from '../../components/LoadingButton';
 import { authBaseStyles, signInStyles } from './style';
 import { COLORS } from '../../theme/theme';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
 
@@ -26,6 +28,40 @@ const SignInScreen = ({ navigation }: Props) => {
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    const [socialLoading, setSocialLoading] = useState(false);
+
+
+    GoogleSignin.configure({
+        webClientId: '725265368829-nk8khhrb0oof47ttnnkmurjr4fsnem74.apps.googleusercontent.com',
+        offlineAccess: false,
+    });
+
+    const handleGoogleSignIn = async () => {
+        setSocialLoading(true);
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            console.log('User Info:', userInfo);
+
+            // Example: navigate after success
+            navigation.replace('Main');
+        } catch (error: any) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                console.log('User cancelled the login flow');
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                console.log('Sign in in progress');
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                console.log('Play services not available');
+            } else {
+                console.log('Some other error:', error);
+                Alert.alert('Error', 'Google Sign-In failed');
+            }
+        } finally {
+            setSocialLoading(false);
+        }
+    };
+
     const handleSignIn = async () => {
         setLoading(true);
         try {
@@ -120,11 +156,11 @@ const SignInScreen = ({ navigation }: Props) => {
 
                 {/* Create Account Button */}
                 <View style={authBaseStyles.ctaButton}>
-                <LoadingButton
-                    title="Sign In"
-                    loading={loading}
-                    onPress={handleSignIn}
-                />
+                    <LoadingButton
+                        title="Sign In"
+                        loading={loading}
+                        onPress={handleSignIn}
+                    />
                 </View>
 
                 <View style={authBaseStyles.altPromptRow}>
@@ -142,11 +178,19 @@ const SignInScreen = ({ navigation }: Props) => {
                 </View>
 
                 <View style={authBaseStyles.socialContainer}>
-                    <TouchableOpacity style={authBaseStyles.socialButton}>
-                        <Image
-                            style={authBaseStyles.socialIcon}
-                            source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
-                        />
+                    <TouchableOpacity
+                        style={authBaseStyles.socialButton}
+                        onPress={handleGoogleSignIn}
+                        disabled={socialLoading}
+                    >
+                        {socialLoading ? (
+                            <ActivityIndicator color="#000" />
+                        ) : (
+                            <Image
+                                style={authBaseStyles.socialIcon}
+                                source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
+                            />
+                        )}
                     </TouchableOpacity>
                     <TouchableOpacity style={authBaseStyles.socialButton}>
                         <Image

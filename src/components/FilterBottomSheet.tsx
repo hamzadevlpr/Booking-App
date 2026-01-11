@@ -1,26 +1,24 @@
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import Slider from '@react-native-community/slider';
 import React, { forwardRef, useMemo, useState } from 'react';
 import {
-    View,
+    Modal,
     StyleSheet,
     Text,
     TouchableOpacity,
-    Dimensions,
-    Modal,
+    View
 } from 'react-native';
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import Slider from '@react-native-community/slider';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const PRIMARY = '#2853AF';
-const { height } = Dimensions.get('window');
 
 type Props = {
     onClose: () => void;
+    index?: number;
 };
 
-const FilterBottomSheet = forwardRef<BottomSheet, Props>(({ onClose }, ref) => {
-    const snapPoints = useMemo(() => ['45%', '85%'], []);
-
+const FilterBottomSheet = forwardRef<BottomSheet, Props>(({ onClose, index = -1 }, ref) => {
+    const snapPoints = useMemo(() => ['60%'], []);
     /* ---------------- STATE ---------------- */
     const [adults, setAdults] = useState(2);
     const [children, setChildren] = useState(1);
@@ -51,7 +49,7 @@ const FilterBottomSheet = forwardRef<BottomSheet, Props>(({ onClose }, ref) => {
     return (
         <BottomSheet
             ref={ref}
-            index={-1}
+            index={index}
             snapPoints={snapPoints}
             enablePanDownToClose
             onClose={onClose}

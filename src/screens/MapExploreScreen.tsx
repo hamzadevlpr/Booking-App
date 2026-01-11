@@ -1,25 +1,25 @@
-import React, { useCallback, useRef, useState } from 'react';
+import BottomSheet from '@gorhom/bottom-sheet';
+import React, { useRef, useState } from 'react';
 import {
-    View,
+    Dimensions,
+    FlatList,
+    Image,
     StyleSheet,
     Text,
     TouchableOpacity,
-    Image,
-    Dimensions,
     useColorScheme,
-    FlatList,
+    View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker } from 'react-native-maps';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import ChatIcon from "../assets/icons/message-text.svg"
-import { mockHotels } from '../utiles';
-import SearchBar from '../components/SearchBar';
+import ChatIcon from "../assets/icons/message-text.svg";
 import FilterBottomSheet from '../components/FilterBottomSheet';
-import BottomSheet from '@gorhom/bottom-sheet';
+import SearchBar from '../components/SearchBar';
+import { mockHotels } from '../utiles';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const PRIMARY = '#2853AF';
 
 const MapExploreScreen = ({ navigation }: any) => {
@@ -30,11 +30,7 @@ const MapExploreScreen = ({ navigation }: any) => {
     const mapRef = useRef<MapView>(null);
 
     const bottomSheetRef = useRef<BottomSheet>(null);
-
-    // callbacks
-    const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
-    }, []);
+    const [filterSheetIndex, setFilterSheetIndex] = useState(-1);
 
     const handleMarkerPress = (hotel: typeof mockHotels[0], index: number) => {
         setSelectedHotel(hotel);
@@ -316,7 +312,7 @@ const MapExploreScreen = ({ navigation }: any) => {
             <SearchBar
                 searchText={searchText}
                 onSearchChange={setSearchText}
-                onFilterPress={() => bottomSheetRef.current?.expand()}
+                onFilterPress={() => setFilterSheetIndex(0)}
             />
 
             {/* Bottom Hotel Card */}
@@ -344,7 +340,8 @@ const MapExploreScreen = ({ navigation }: any) => {
             {/* Filter Bottom Sheet */}
             <FilterBottomSheet
                 ref={bottomSheetRef}
-                onClose={() => bottomSheetRef.current?.close()}
+                index={filterSheetIndex}
+                onClose={() => setFilterSheetIndex(-1)}
             />
         </SafeAreaView>
     );

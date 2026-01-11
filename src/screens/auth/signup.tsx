@@ -8,6 +8,7 @@ import {
     ScrollView,
     StatusBar,
     Alert,
+    ActivityIndicator,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,11 +16,9 @@ import { RootStackParamList } from '../../App';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LoadingButton from '../../components/LoadingButton';
 import { authBaseStyles } from './style';
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { AccessToken, LoginManager } from 'react-native-fbsdk-next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -30,6 +29,67 @@ const SignUpScreen = ({ navigation }: Props) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [socialLoading, setSocialLoading] = useState(false);
+
+
+    const handleGoogleSignIn = async () => {
+        setSocialLoading(true);
+        try {
+            await GoogleSignin.hasPlayServices();
+            const { idToken } = await GoogleSignin.signIn();
+
+            // Create a Firebase credential with the token
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+            // Sign in with Firebase
+            const userCredential = await auth().signInWithCredential(googleCredential);
+
+            console.log('Firebase User:', userCredential.user);
+
+            // Navigate after successful login
+            navigation.replace('Main');
+
+        } catch (error: any) {
+            console.log('Google Sign-In error:', error);
+            Alert.alert('Error', 'Google Sign-In failed');
+        } finally {
+            setSocialLoading(false);
+        }
+    };
+
+    const handleFacebookSignIn = async () => {
+        setSocialLoading(true);
+        try {
+            // Launch Facebook login
+            const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+
+            if (result.isCancelled) {
+                console.log('User cancelled the login');
+                setSocialLoading(false);
+                return;
+            }
+
+            // Get Facebook access token
+            const data = await AccessToken.getCurrentAccessToken();
+            if (!data) throw new Error('Failed to get access token');
+
+            // Create Firebase credential
+            const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
+
+            // Sign in with Firebase
+            const userCredential = await auth().signInWithCredential(facebookCredential);
+
+            console.log('Firebase User:', userCredential.user);
+
+            // Navigate to Main screen
+            navigation.replace('Main');
+        } catch (error) {
+            console.log('Facebook Sign-In error:', error);
+            Alert.alert('Error', 'Facebook Sign-In failed');
+        } finally {
+            setSocialLoading(false);
+        }
+    };
 
     const handleSignUp = async () => {
         setLoading(true);
@@ -114,12 +174,12 @@ const SignUpScreen = ({ navigation }: Props) => {
                 </View>
 
                 {/* Create Account Button */}
-                    <LoadingButton
-                        title="Sign Up"
-                        loading={loading}
-                        onPress={handleSignUp}
-                        style={authBaseStyles.ctaButton}
-                    />
+                <LoadingButton
+                    title="Sign Up"
+                    loading={loading}
+                    onPress={handleSignUp}
+                    style={authBaseStyles.ctaButton}
+                />
                 <View style={authBaseStyles.altPromptRow}>
                     <Text style={authBaseStyles.altPromptText}>Already have an account?</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('SignIn')} activeOpacity={0.8}>
@@ -135,11 +195,19 @@ const SignUpScreen = ({ navigation }: Props) => {
                 </View>
 
                 <View style={authBaseStyles.socialContainer}>
-                    <TouchableOpacity style={authBaseStyles.socialButton}>
-                        <Image
-                            style={authBaseStyles.socialIcon}
-                            source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
-                        />
+                    <TouchableOpacity
+                        style={authBaseStyles.socialButton}
+                        onPress={handleGoogleSignIn}
+                        disabled={socialLoading}
+                    >
+                        {socialLoading ? (
+                            <ActivityIndicator color="#000" />
+                        ) : (
+                            <Image
+                                style={authBaseStyles.socialIcon}
+                                source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
+                            />
+                        )}
                     </TouchableOpacity>
                     <TouchableOpacity style={authBaseStyles.socialButton}>
                         <Image
@@ -147,11 +215,15 @@ const SignUpScreen = ({ navigation }: Props) => {
                             source={{ uri: 'https://img.icons8.com/ios-filled/50/mac-os.png' }}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity style={authBaseStyles.socialButton}>
-                        <Image
-                            style={authBaseStyles.socialIcon}
-                            source={{ uri: 'https://img.icons8.com/color/48/facebook-new.png' }}
-                        />
+                    <TouchableOpacity style={authBaseStyles.socialButton} onPress={handleFacebookSignIn} disabled={socialLoading}>
+                        {socialLoading ? (
+                            <ActivityIndicator color="#000" />
+                        ) : (   
+                            <Image
+                                style={authBaseStyles.socialIcon}
+                                source={{ uri: 'https://img.icons8.com/color/48/facebook-new.png' }}
+                            />
+                        )}
                     </TouchableOpacity>
                 </View>
 
