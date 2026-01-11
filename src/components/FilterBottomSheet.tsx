@@ -1,5 +1,4 @@
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import Slider from '@react-native-community/slider';
 import React, { forwardRef, useMemo, useState } from 'react';
 import {
     Modal,
@@ -9,6 +8,7 @@ import {
     View
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import PriceRange from './PriceRange';
 
 const PRIMARY = '#2853AF';
 
@@ -74,32 +74,10 @@ const FilterBottomSheet = forwardRef<BottomSheet, Props>(({ onClose, index = -1 
                 </View>
 
                 {/* Price */}
-                <View style={styles.section}>
-                    <View style={styles.rowBetween}>
-                        <Text style={styles.label}>Price</Text>
-                        <Text style={styles.priceText}>${minPrice} - ${maxPrice}</Text>
-                    </View>
-
-                    <Slider
-                        minimumValue={0}
-                        maximumValue={80}
-                        value={minPrice}
-                        onValueChange={v => v <= maxPrice && setMinPrice(Math.round(v))}
-                        minimumTrackTintColor={PRIMARY}
-                        maximumTrackTintColor="#E5E7EB"
-                        thumbTintColor={PRIMARY}
-                    />
-
-                    <Slider
-                        minimumValue={0}
-                        maximumValue={80}
-                        value={maxPrice}
-                        onValueChange={v => v >= minPrice && setMaxPrice(Math.round(v))}
-                        minimumTrackTintColor={PRIMARY}
-                        maximumTrackTintColor="#E5E7EB"
-                        thumbTintColor={PRIMARY}
-                    />
-                </View>
+                <PriceRange min={minPrice} max={maxPrice} onChange={(low, high) => {
+                    setMinPrice(low);
+                    setMaxPrice(high);
+                }} />
 
                 {/* Instant Book */}
                 <View style={styles.section}>
