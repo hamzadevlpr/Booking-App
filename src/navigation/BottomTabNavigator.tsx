@@ -1,23 +1,23 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Screens
-import HomeScreen from '../screens/home/home';
 import BookingScreen from '../screens/home/booking';
+import HomeScreen from '../screens/home/home';
 import MessageScreen from '../screens/home/message';
 
 // SVG Icons
-import HomeIcon from '../assets/icons/home.svg';
-import HomeFillIcon from '../assets/icons/home-fill.svg';
-import BookingIcon from '../assets/icons/document.svg';
-import BookingFillIcon from '../assets/icons/document-fill.svg';
-import MessageIcon from '../assets/icons/chat.svg';
 import MessageFillIcon from '../assets/icons/chat-fill.svg';
-import ProfileIcon from '../assets/icons/user.svg';
+import MessageIcon from '../assets/icons/chat.svg';
+import BookingFillIcon from '../assets/icons/document-fill.svg';
+import BookingIcon from '../assets/icons/document.svg';
+import HomeFillIcon from '../assets/icons/home-fill.svg';
+import HomeIcon from '../assets/icons/home.svg';
 import ProfileFillIcon from '../assets/icons/user-fill.svg';
-import ProfileScreen from '../screens/home/prodile';
+import ProfileIcon from '../assets/icons/user.svg';
+import ProfileStackNavigator from './ProfileStackNavigator';
 
 const PRIMARY = '#2853AF';
 
@@ -33,7 +33,7 @@ const Tab = createBottomTabNavigator<BottomTabParamList>();
 // Map tabs to SVG components
 const SVG_ICONS: Record<
   keyof BottomTabParamList,
-  { default: React.FC<{ width: number; height: number; fill: string }> ; filled: React.FC<{ width: number; height: number; fill: string }> }
+  { default: React.FC<{ width: number; height: number; fill: string }>; filled: React.FC<{ width: number; height: number; fill: string }> }
 > = {
   Home: { default: HomeIcon, filled: HomeFillIcon },
   Booking: { default: BookingIcon, filled: BookingFillIcon },
@@ -94,7 +94,7 @@ const BottomTabNavigator = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileStackNavigator}
         options={{
           tabBarIcon: ({ focused }) => <TabIcon tab="Profile" focused={focused} />,
         }}

@@ -13,10 +13,11 @@ import SignUpScreen from './screens/auth/signup';
 import OnboardingScreen from './screens/onboarding';
 
 // Bottom Tabs
-import BottomTabNavigator from './navigation/BottomTabNavigator';
-import MapExploreScreen from './screens/MapExploreScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import BottomTabNavigator from './navigation/BottomTabNavigator';
 import BookingDetailScreen from './screens/BookingDetailScreen';
+import MapExploreScreen from './screens/MapExploreScreen';
+import PersonalInfoScreen from './screens/PersonalInfoScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -28,6 +29,7 @@ export type RootStackParamList = {
   Main: undefined;
   MapExplore: undefined;
   BookingDetail: undefined;
+  Personal: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -40,10 +42,15 @@ const App = () => {
       <SafeAreaProvider>
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-          backgroundColor={isDarkMode ? '#000' : '#fff'}
+          backgroundColor={isDarkMode ? '#000000' : '#FFFFFF'}
         />
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }} >
+          <Stack.Navigator screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_right',
+            statusBarStyle: 'dark',
+            statusBarBackgroundColor: '#FFFFFF',
+          }}>
             {/* Onboarding / Auth Flow */}
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
             <Stack.Screen name="SignIn" component={SignInScreen} />
@@ -56,6 +63,10 @@ const App = () => {
             <Stack.Screen name="Main" component={BottomTabNavigator} />
             <Stack.Screen name="MapExplore" component={MapExploreScreen} />
             <Stack.Screen name="BookingDetail" component={BookingDetailScreen} options={{ headerShown: false }} />
+            <Stack.Screen
+              name="Personal"
+              component={PersonalInfoScreen}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

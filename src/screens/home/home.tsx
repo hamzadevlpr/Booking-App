@@ -1,6 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ImageBackground,
@@ -216,12 +217,12 @@ const HomeScreen = ({ navigation }: any) => {
               activeOpacity={0.8}
             >
               <Icon
-          name={item.icon}
-          size={16}
-          color={item.active ? '#fff' : '#8C95A8'}
+                name={item.icon}
+                size={16}
+                color={item.active ? '#fff' : '#8C95A8'}
               />
               <Text style={[styles.filterText, item.active && styles.filterTextActive]}>
-          {item.label}
+                {item.label}
               </Text>
             </TouchableOpacity>
           )}
@@ -259,13 +260,32 @@ const HomeScreen = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
         {/* Map Card */}
-        {hasPermission && userLocation ? (
-          <MapCard
-            latitude={userLocation.latitude}
-            longitude={userLocation.longitude}
-            title="My Location"
-            location="Nearby stays"
-          />
+
+        {hasPermission ? (
+          userLocation ? (
+            <MapCard
+              latitude={userLocation.latitude}
+              longitude={userLocation.longitude}
+              title="My Location"
+              location="Nearby stays"
+            />
+          ) : (
+            // eslint-disable-next-line react-native/no-inline-styles
+            <View style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '90%',
+              height: 180,
+              borderRadius: 20,
+              overflow: 'hidden',
+              marginVertical: 10,
+              alignSelf: 'center',
+              backgroundColor: '#fff',
+              elevation: 5
+            }}>
+              <ActivityIndicator size="large" color="#2853AF" />
+            </View>
+          )
         ) : checked ? (
           <Text style={{ textAlign: 'center', color: '#8C95A8', marginTop: 10 }}>
             Location permission is required to show nearby places

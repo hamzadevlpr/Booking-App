@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignSelf: 'center',
     backgroundColor: '#fff',
-    elevation: 5,
+    // elevation: 5,
   },
   map: { 
     width: '100%', 
