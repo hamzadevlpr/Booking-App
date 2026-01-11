@@ -43,7 +43,7 @@ const App = () => {
           backgroundColor={isDarkMode ? '#000' : '#fff'}
         />
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }} >
             {/* Onboarding / Auth Flow */}
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
             <Stack.Screen name="SignIn" component={SignInScreen} />
