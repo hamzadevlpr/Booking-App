@@ -18,6 +18,8 @@ import BottomTabNavigator from './navigation/BottomTabNavigator';
 import BookingDetailScreen from './screens/BookingDetailScreen';
 import MapExploreScreen from './screens/MapExploreScreen';
 import PersonalInfoScreen from './screens/PersonalInfoScreen';
+import ReviewScreen from './screens/ReviewScreen';
+import FacilitiesAccordionScreen from './screens/FacilitiesAccordionScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -30,6 +32,8 @@ export type RootStackParamList = {
   MapExplore: undefined;
   BookingDetail: undefined;
   Personal: undefined;
+  ReviewScreen: undefined;
+  FacilitiesAccordionScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -66,6 +70,16 @@ const App = () => {
             <Stack.Screen
               name="Personal"
               component={PersonalInfoScreen}
+            />
+            <Stack.Screen
+              name="ReviewScreen"
+              component={ReviewScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="FacilitiesAccordionScreen"
+              component={FacilitiesAccordionScreen}
+              options={{ headerShown: false }}
             />
           </Stack.Navigator>
         </NavigationContainer>

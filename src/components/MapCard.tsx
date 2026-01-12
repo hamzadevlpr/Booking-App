@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Dimensions, ActivityIndicator } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import Svg, { Circle } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
 
@@ -51,11 +52,14 @@ const MapCard: React.FC<MapCardProps> = ({ latitude, longitude, title, location,
           title={title}
           description={location}
         >
-          <View style={styles.markerContainer}>
-            <View style={styles.outerCircle}>
-              <View style={styles.innerCircle} />
-            </View>
-          </View>
+          <Svg width={48} height={48}>
+            {/* Blue outer circle */}
+            <Circle cx={24} cy={20} r={16} fill="#2853AF" />
+            {/* White center */}
+            <Circle cx={24} cy={20} r={8} fill="#fff" />
+            {/* Green dot at bottom center */}
+            <Circle cx={24} cy={38} r={5} fill="#3EC28F" stroke="#fff" strokeWidth={2} />
+          </Svg>
         </Marker>
       </MapView>
     </View>
@@ -68,13 +72,11 @@ const styles = StyleSheet.create({
   card: {
     width: width * 0.9,
     height: 180,
-    paddingHorizontal: 16,
     borderRadius: 20,
     overflow: 'hidden',
     marginVertical: 10,
     alignSelf: 'center',
-    backgroundColor: '#fff',
-    // elevation: 5,
+    backgroundColor: '#fff'
   },
   map: { 
     width: '100%', 
@@ -100,122 +102,21 @@ const styles = StyleSheet.create({
     color: '#2853AF',
     fontFamily: 'Poppins-Medium',
   },
-  markerContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  outerCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(40, 83, 175, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  innerCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#2853AF',
-    borderWidth: 3,
-    borderColor: '#fff',
-  },
+  // Marker styles removed; now using SVG
 });
 
 const mapStyle = [
-  {
-    elementType: 'geometry',
-    stylers: [
-      {
-        color: '#f5f5f5',
-      },
-    ],
-  },
-  {
-    elementType: 'labels.icon',
-    stylers: [
-      {
-        visibility: 'off',
-      },
-    ],
-  },
-  {
-    elementType: 'labels.text.fill',
-    stylers: [
-      {
-        color: '#616161',
-      },
-    ],
-  },
-  {
-    elementType: 'labels.text.stroke',
-    stylers: [
-      {
-        color: '#f5f5f5',
-      },
-    ],
-  },
-  {
-    featureType: 'administrative.land_parcel',
-    elementType: 'labels.text.fill',
-    stylers: [
-      {
-        color: '#bdbdbd',
-      },
-    ],
-  },
-  {
-    featureType: 'poi',
-    elementType: 'geometry',
-    stylers: [
-      {
-        color: '#eeeeee',
-      },
-    ],
-  },
-  {
-    featureType: 'poi.park',
-    elementType: 'geometry',
-    stylers: [
-      {
-        color: '#a8dba8',
-      },
-    ],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry',
-    stylers: [
-      {
-        color: '#ffffff',
-      },
-    ],
-  },
-  {
-    featureType: 'road.arterial',
-    elementType: 'geometry',
-    stylers: [
-      {
-        color: '#ffffff',
-      },
-    ],
-  },
-  {
-    featureType: 'road.highway',
-    elementType: 'geometry',
-    stylers: [
-      {
-        color: '#dadada',
-      },
-    ],
-  },
-  {
-    featureType: 'water',
-    elementType: 'geometry',
-    stylers: [
-      {
-        color: '#c9c9c9',
-      },
-    ],
-  },
+  { elementType: 'geometry', stylers: [{ color: '#f7f7f7' }] },
+  { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#b0b0b0' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#f7f7f7' }] },
+  { featureType: 'administrative', stylers: [{ visibility: 'off' }] },
+  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+  { featureType: 'poi.park', stylers: [{ visibility: 'off' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+  { featureType: 'road.arterial', elementType: 'geometry', stylers: [{ color: '#ededed' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#e0e0e0' }] },
+  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e3e3e3' }] },
+  { featureType: 'landscape', stylers: [{ color: '#f7f7f7' }] },
 ];

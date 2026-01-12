@@ -274,7 +274,7 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={{
               justifyContent: 'center',
               alignItems: 'center',
-              width: '90%',
+              width: '100%',
               height: 180,
               borderRadius: 20,
               overflow: 'hidden',

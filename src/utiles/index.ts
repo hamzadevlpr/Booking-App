@@ -108,7 +108,7 @@ export const mockBookingDetail = {
     { key: 'pool', label: 'Swimming Pool', icon: 'pool' },
     { key: 'frontdesk', label: '24-Hours Front Desk', icon: 'clock-outline' },
   ],
-  description: 'The ideal place for those looking for a luxurious and tranquil holiday experience with stunning sea views....',
+  description: 'Located in the heart of Rome, NY, The Aston Villa Hotel offers luxurious accommodations with stunning views of the city skyline. Enjoy our top-notch facilities including a rooftop pool, gourmet restaurant, and state-of-the-art fitness center. Whether you are here for business or leisure, our dedicated staff is committed to making your stay unforgettable.',
   reviews: [
     {
       id: 'r1',

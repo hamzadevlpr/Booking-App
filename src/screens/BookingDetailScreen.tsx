@@ -1,172 +1,487 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Animated,
+  Platform,
+  StatusBar,
+} from 'react-native';
+import { Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { mockBookingDetail } from '../utiles';
+import SwimIcon from '../assets/icons/swim.svg';
+import ResturantIcon from '../assets/icons/building.svg';
+import WindIcon from '../assets/icons/wind.svg';
+import SupportIcon from '../assets/icons/24-support.svg';
 import MapCard from '../components/MapCard';
+import { mockBookingDetail } from '../utiles';
 
 const PRIMARY = '#2853AF';
+const HEADER_IMAGE_HEIGHT = 270;
+const HEADER_HEIGHT = Platform.OS === 'ios' ? 88 : 72;
+const STATUS_BAR_HEIGHT =
+  Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 24;
 
 const BookingDetailScreen = ({ navigation }: any) => {
-    const data = mockBookingDetail;
 
-    return (
-        <View style={{ flex: 1, backgroundColor: '#F7F8FA' }}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                {/* Header Image */}
-                <View style={{ position: 'relative' }}>
-                    <Image source={{ uri: data.image }} style={styles.headerImage} />
-                    <View style={styles.headerBar}>
-                        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerBtn}>
-                            <Icon name="arrow-left" size={22} color="#0F1831" />
-                        </TouchableOpacity>
-                        <Text style={styles.headerTitle}>Detail</Text>
-                        <TouchableOpacity style={styles.headerBtn}>
-                            <Icon name="dots-vertical" size={22} color="#0F1831" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const data = mockBookingDetail;
 
-                {/* Card Section */}
-                <View style={styles.cardSection}>
-                    <Text style={styles.hotelName}>{data.name}</Text>
-                    <View style={styles.rowBetween}>
-                        <Text style={styles.hotelLocation}>{data.location.location}</Text>
-                        <View style={styles.row}>
-                            <Icon name="star" size={16} color="#FFB800" />
-                            <Text style={styles.rating}>{data.rating}</Text>
-                        </View>
-                    </View>
+  // State for description collapse/expand
+  const [descExpanded, setDescExpanded] = useState(false);
 
-                    {/* Common Facilities */}
-                    <View style={styles.facilitiesHeaderRow}>
-                        <Text style={styles.facilitiesLabel}>Common Facilities</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.seeAll}>See All</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.facilitiesRow}>
-                        {data.facilities.map(fac => (
-                            <View key={fac.key} style={styles.facilityItem}>
-                                <View style={styles.facilityIconWrap}>
-                                    <Icon name={fac.icon} size={22} color={PRIMARY} />
-                                </View>
-                                <Text style={styles.facilityText}>{fac.label}</Text>
-                            </View>
-                        ))}
-                    </View>
+  // Handler to open Google Maps
+  const handleOpenMap = () => {
+    const url = `https://www.google.com/maps/search/?api=1&query=${data.location.latitude},${data.location.longitude}`;
+    Linking.openURL(url);
+  };
 
-                    {/* Description */}
-                    <Text style={styles.sectionTitle}>Description</Text>
-                    <Text style={styles.description}>{data.description} <Text style={styles.readMore}>Read More</Text></Text>
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [HEADER_IMAGE_HEIGHT - 80, HEADER_IMAGE_HEIGHT],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
 
-                    {/* Location */}
-                    <View style={styles.locationHeaderRow}>
-                        <Text style={styles.sectionTitle}>Location</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.openMap}>Open Map</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.mapBox}>
-                        <MapCard longitude={data.location.longitude} latitude={data.location.latitude} />
-                    </View>
-                    <Text style={styles.address}>{data.address}</Text>
-                </View>
+  const headerTranslate = scrollY.interpolate({
+    inputRange: [HEADER_IMAGE_HEIGHT - 80, HEADER_IMAGE_HEIGHT],
+    outputRange: [20, 0],
+    extrapolate: 'clamp',
+  });
 
-                {/* Reviews */}
-                <View style={styles.cardSection}>
-                    <View style={styles.reviewsHeaderRow}>
-                        <Text style={styles.sectionTitle}>Reviews</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.seeAll}>See All</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {data.reviews.map(r => (
-                        <View key={r.id} style={styles.reviewRow}>
-                            <Image source={{ uri: r.avatar }} style={styles.avatar} />
-                            <View style={{ flex: 1 }}>
-                                <Text style={styles.reviewName}>{r.name}</Text>
-                                <Text style={styles.reviewText}>{r.text}</Text>
-                            </View>
-                            <View style={styles.row}>
-                                <Icon name="star" size={16} color="#FFB800" />
-                                <Text style={styles.rating}>{r.rating}</Text>
-                            </View>
-                        </View>
-                    ))}
-                </View>
+  return (
+    <View style={styles.container}>
+      {/* 🔹 Sticky Animated Header */}
+      <Animated.View
+        style={[
+          styles.stickyHeader,
+          {
+            opacity: headerOpacity,
+            transform: [{ translateY: headerTranslate }],
+          },
+        ]}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={22} color="#0F1831" />
+        </TouchableOpacity>
 
-                {/* Recommendation */}
-                <View style={styles.cardSection}>
-                    <Text style={styles.sectionTitle}>Recommendation</Text>
-                    <View style={styles.recommendRow}>
-                        <Image source={{ uri: data.recommendations[0].image }} style={styles.recommendImage} />
-                        <View style={{ flex: 1, marginLeft: 12 }}>
-                            <Text style={styles.recommendName}>{data.recommendations[0].name}</Text>
-                            <Text style={styles.recommendLocation}>{data.recommendations[0].location}</Text>
-                            <View style={styles.row}>
-                                <Icon name="star" size={16} color="#FFB800" />
-                                <Text style={styles.rating}>{data.recommendations[0].rating}</Text>
-                                <Text style={styles.recommendPrice}>${data.recommendations[0].price}</Text>
-                                <Text style={styles.recommendOldPrice}>${data.recommendations[0].oldPrice}</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            </ScrollView>
-            {/* Bottom Bar */}
-            <View style={styles.bottomBar}>
-                <Text style={styles.bottomPrice}>Price</Text>
-                <Text style={styles.bottomPriceValue}>${data.price.toFixed(2)}</Text>
-                <TouchableOpacity style={styles.bookingBtn}>
-                    <Text style={styles.bookingBtnText}>Booking Now</Text>
-                </TouchableOpacity>
-            </View>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Text style={styles.stickyTitle}>{data.name}</Text>
+          <Text style={styles.stickySubtitle}>
+            {data.location.location}
+          </Text>
         </View>
-    );
-};
 
+        <Icon name="dots-vertical" size={22} color="#0F1831" />
+      </Animated.View>
+
+      {/* 🔹 Content */}
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
+      >
+        {/* Header Image */}
+        <View>
+          <Image source={{ uri: data.image }} style={styles.headerImage} />
+
+          {/* Image Header Buttons */}
+          <View style={styles.imageHeader}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.headerBtn}
+            >
+              <Icon name="arrow-left" size={22} color="#0F1831" />
+            </TouchableOpacity>
+
+            <Text style={styles.imageHeaderTitle}>Detail</Text>
+
+            <TouchableOpacity style={styles.headerBtn}>
+              <Icon name="dots-vertical" size={22} color="#0F1831" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Card */}
+        <View style={styles.card}>
+          <Text style={styles.hotelName}>{data.name}</Text>
+
+          <View style={styles.rowBetween}>
+            <Text style={styles.locationText}>
+              {data.location.location}
+            </Text>
+            <View style={styles.row}>
+              <Icon name="star" size={16} color="#FFB800" />
+              <Text style={styles.rating}>{data.rating}</Text>
+            </View>
+          </View>
+
+          {/* Facilities */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Common Facilities</Text>
+            <Text style={styles.link} onPress={() => navigation.navigate('FacilitiesAccordionScreen')}>See All</Text>
+          </View>
+
+          <View style={styles.facilitiesRow}>
+            {data.facilities.map(f => (
+              <View key={f.key} style={styles.facilityItem}>
+                <View style={styles.facilityIcon}>
+                  {f.key === 'pool' ? (
+                    <SwimIcon width={26} height={26} />
+                  ) : f.key === 'frontdesk' ? (
+                    <SupportIcon width={26} height={26} />
+                  ) : f.key === 'restaurant' ? (
+                    <ResturantIcon width={26} height={26} />
+                  ) : f.key === 'ac' ? (
+                    <WindIcon width={26} height={26} />
+                  ) : (
+                    <Icon name={f.icon} size={22} color={PRIMARY} />
+                  )}
+                </View>
+                <Text style={styles.facilityText}>{f.label}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Description */}
+          <Text style={styles.sectionTitle}>Description</Text>
+          <Text style={styles.description} numberOfLines={descExpanded ? undefined : 3}>
+            {data.description}
+            {!descExpanded && '... '}
+            <Text style={styles.link} onPress={() => setDescExpanded(!descExpanded)}>
+              {descExpanded ? 'Read Less' : 'Read More'}
+            </Text>
+          </Text>
+
+          {/* Location */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Location</Text>
+            <Text style={styles.link} onPress={handleOpenMap}>Open Map</Text>
+          </View>
+
+          <View style={styles.mapBox}>
+            <MapCard
+              latitude={data.location.latitude}
+              longitude={data.location.longitude}
+            />
+          </View>
+
+          <Text style={styles.address}>{data.address}</Text>
+
+        {/* Reviews */}
+          <View style={styles.reviewCard}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Reviews</Text>
+              <Text style={styles.link} onPress={() => navigation.navigate('ReviewScreen')}>See All</Text>
+            </View>
+
+            {data.reviews.map(r => (
+              <View key={r.id} style={styles.reviewRow}>
+                <Image source={{ uri: r.avatar }} style={styles.avatar} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.reviewName}>{r.name}</Text>
+                  <Text style={styles.reviewText}>{r.text}</Text>
+                </View>
+                <View style={styles.row}>
+                  <Icon name="star" size={14} color="#FFB800" />
+                  <Text style={styles.rating}>{r.rating}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        
+
+        <View style={{ height: 40 }} />
+        </View>
+      </Animated.ScrollView>
+
+      {/* 🔹 Bottom Booking Bar */}
+      <View style={styles.bottomBar}>
+        <View>
+          <Text style={styles.bottomLabel}>Price</Text>
+          <Text style={styles.bottomPrice}>
+            ${data.price.toFixed(2)}
+          </Text>
+        </View>
+
+        <TouchableOpacity style={styles.bookBtn}>
+          <Text style={styles.bookText}>Booking Now</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 const styles = StyleSheet.create({
-    headerImage: { width: '100%', height: 220, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
-    headerBar: { position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 36, zIndex: 10 },
-    headerBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.9)', alignItems: 'center', justifyContent: 'center' },
-    headerTitle: { fontSize: 16, fontFamily: 'Poppins-Bold', color: '#0F1831', textAlign: 'center', flex: 1 },
-    cardSection: { backgroundColor: '#fff', borderRadius: 20, marginHorizontal: 12, marginTop: 16, padding: 18, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
-    hotelName: { fontSize: 18, fontFamily: 'Poppins-Bold', color: '#0F1831', marginBottom: 4 },
-    hotelLocation: { fontSize: 13, color: '#8C95A8', fontFamily: 'Poppins-Regular' },
-    rowBetween: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
-    row: { flexDirection: 'row', alignItems: 'center' },
-    rating: { fontSize: 13, color: '#0F1831', fontFamily: 'Poppins-SemiBold', marginLeft: 4 },
-    facilitiesHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 },
-    facilitiesLabel: { fontSize: 15, fontFamily: 'Poppins-SemiBold', color: '#0F1831' },
-    seeAll: { color: PRIMARY, fontSize: 13, fontFamily: 'Poppins-Medium' },
-    facilitiesRow: { flexDirection: 'row', alignItems: 'center', marginTop: 12, marginBottom: 8 },
-    facilityItem: { alignItems: 'center', marginRight: 24 },
-    facilityIconWrap: { backgroundColor: '#F2F6FF', borderRadius: 16, width: 40, height: 40, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
-    facilityText: { fontSize: 12, color: '#8C95A8', fontFamily: 'Poppins-Medium' },
-    sectionTitle: { fontSize: 15, fontFamily: 'Poppins-SemiBold', color: '#0F1831', marginTop: 10, marginBottom: 6 },
-    description: { fontSize: 13, color: '#8C95A8', fontFamily: 'Poppins-Regular', marginBottom: 4 },
-    readMore: { color: PRIMARY, fontSize: 13, fontFamily: 'Poppins-Medium' },
-    locationHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 },
-    openMap: { color: PRIMARY, fontSize: 13, fontFamily: 'Poppins-Medium' },
-    mapBox: { borderRadius: 16, overflow: 'hidden', marginTop: 10, marginBottom: 8 },
-    mapImage: { width: '100%', height: 90, borderRadius: 16 },
-    address: { fontSize: 13, color: '#8C95A8', fontFamily: 'Poppins-Regular', marginBottom: 8 },
-    reviewsHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
-    reviewRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 14 },
-    avatar: { width: 38, height: 38, borderRadius: 19, marginRight: 10 },
-    reviewName: { fontSize: 13, fontFamily: 'Poppins-SemiBold', color: '#0F1831' },
-    reviewText: { fontSize: 13, color: '#8C95A8', fontFamily: 'Poppins-Regular' },
-    recommendRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-    recommendImage: { width: 60, height: 60, borderRadius: 12 },
-    recommendName: { fontSize: 14, fontFamily: 'Poppins-Bold', color: '#0F1831' },
-    recommendLocation: { fontSize: 12, color: '#8C95A8', fontFamily: 'Poppins-Regular', marginBottom: 2 },
-    recommendPrice: { fontSize: 13, color: PRIMARY, fontFamily: 'Poppins-Bold', marginLeft: 8 },
-    recommendOldPrice: { fontSize: 13, color: '#B0B4BB', fontFamily: 'Poppins-Regular', marginLeft: 6, textDecorationLine: 'line-through' },
-    bottomBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 16, borderTopLeftRadius: 18, borderTopRightRadius: 18, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 8, shadowOffset: { width: 0, height: -2 }, elevation: 8 },
-    bottomPrice: { fontSize: 13, color: '#8C95A8', fontFamily: 'Poppins-Regular', marginRight: 8 },
-    bottomPriceValue: { fontSize: 18, color: '#0F1831', fontFamily: 'Poppins-Bold', marginRight: 16 },
-    bookingBtn: { flex: 1, backgroundColor: PRIMARY, borderRadius: 12, paddingVertical: 14, alignItems: 'center' },
-    bookingBtnText: { color: '#fff', fontSize: 16, fontFamily: 'Poppins-Bold' },
+  container: {
+    flex: 1,
+    backgroundColor: '#F7F8FA',
+  },
+
+  /* 🔹 Sticky Header */
+  stickyHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: HEADER_HEIGHT + STATUS_BAR_HEIGHT,
+    paddingTop: STATUS_BAR_HEIGHT,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+    zIndex: 100,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F2F3F7',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+
+  stickyTitle: {
+    fontSize: 15,
+    fontFamily: 'Poppins-Bold',
+    color: '#0F1831',
+  },
+
+  stickySubtitle: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Regular',
+    color: '#8C95A8',
+    marginTop: 2,
+  },
+
+  /* 🔹 Header Image */
+  headerImage: {
+    width: '100%',
+    height: HEADER_IMAGE_HEIGHT,
+  },
+
+  imageHeader: {
+    position: 'absolute',
+    top: STATUS_BAR_HEIGHT,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  imageHeaderTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: '#0F1831',
+  },
+
+  headerBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  /* 🔹 Card */
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 20,
+    marginTop: -32,
+    marginBottom: 16,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+  },
+  reviewCard: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+  },
+
+  hotelName: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: '#0F1831',
+  },
+
+  locationText: {
+    fontSize: 13,
+    fontFamily: 'Poppins-Regular',
+    color: '#8C95A8',
+  },
+
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 6,
+  },
+
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  rating: {
+    fontSize: 13,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#0F1831',
+    marginLeft: 4,
+  },
+
+  /* 🔹 Section */
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 14,
+  },
+
+  sectionTitle: {
+    fontSize: 15,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#0F1831',
+  },
+
+  link: {
+    fontSize: 13,
+    fontFamily: 'Poppins-Medium',
+    color: PRIMARY,
+  },
+
+  /* 🔹 Facilities */
+  facilitiesRow: {
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    marginTop: 12,
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    width: '100%',
+  },
+
+  facilityItem: {
+    alignItems: 'center',
+    flex: 1,
+    minWidth: 0,
+  },
+
+  facilityIcon: {
+    width: 54,
+    height: 54,
+    borderRadius: 30,
+    backgroundColor: '#E8F2FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+
+  facilityText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
+    color: '#8C95A8',
+    textAlign: 'center',
+    flexWrap: 'wrap',
+  },
+
+  /* 🔹 Description */
+  description: {
+    fontSize: 13,
+    fontFamily: 'Poppins-Regular',
+    color: '#8C95A8',
+    marginTop: 6,
+  },
+
+  /* 🔹 Map */
+  mapBox: {
+    height: 180,
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginTop: 10,
+  },
+
+  address: {
+    fontSize: 13,
+    fontFamily: 'Poppins-Regular',
+    color: '#8C95A8',
+    marginTop: 6,
+  },
+
+  /* 🔹 Reviews */
+  reviewRow: {
+    flexDirection: 'row',
+    marginTop: 14,
+  },
+
+  avatar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    marginRight: 10,
+  },
+
+  reviewName: {
+    fontSize: 13,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#0F1831',
+  },
+
+  reviewText: {
+    fontSize: 13,
+    fontFamily: 'Poppins-Regular',
+    color: '#8C95A8',
+  },
+
+  /* 🔹 Bottom Bar */
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+
+  bottomLabel: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Regular',
+    color: '#8C95A8',
+  },
+
+  bottomPrice: {
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    color: '#0F1831',
+  },
+
+  bookBtn: {
+    flex: 1,
+    backgroundColor: PRIMARY,
+    marginLeft: 16,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+
+  bookText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: '#fff',
+  },
 });
+
 
 export default BookingDetailScreen;
