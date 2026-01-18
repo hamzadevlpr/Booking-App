@@ -208,7 +208,10 @@ const BookingDetailScreen = ({ navigation }: any) => {
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.bookBtn}>
+        <TouchableOpacity
+          style={styles.bookBtn}
+          onPress={() => navigation.navigate('RequestToBookScreen')}
+        >
           <Text style={styles.bookText}>Booking Now</Text>
         </TouchableOpacity>
       </View>

@@ -12,7 +12,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RootStackParamList } from '../../App';
-import { ForgetStyles } from './style';
+import { authBaseStyles } from './style';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Forget'>;
 
@@ -30,27 +30,27 @@ const ForgetScreen = ({ navigation }: Props) => {
     };
 
     return (
-        <View style={[ForgetStyles.container, { paddingTop: insets.top }]}>
+        <View style={[authBaseStyles.container, { paddingTop: insets.top }]}>
             <StatusBar barStyle="dark-content" />
 
-            <ScrollView contentContainerStyle={ForgetStyles.scrollContent}>
+            <ScrollView contentContainerStyle={authBaseStyles.scrollContent}>
                 {/* Header */}
-                <TouchableOpacity style={ForgetStyles.backButton} onPress={() => navigation.goBack()}>
+                <TouchableOpacity style={authBaseStyles.backButton} onPress={() => navigation.goBack()}>
                     <Icon name="arrow-left" size={24} color="#000" />
                 </TouchableOpacity>
 
-                <Text style={ForgetStyles.title}>Reset Password</Text>
-                <Text style={ForgetStyles.subtitle}> 
+                <Text style={authBaseStyles.title}>Reset Password</Text>
+                <Text style={authBaseStyles.subtitle}> 
                     Enter your email address below to receive a link to reset your password.
                 </Text>
 
                 {/* Form */}
-                <View style={ForgetStyles.formContainer}>
+                <View style={authBaseStyles.formContainer}>
                     {/* Email */}
-                    <View style={ForgetStyles.fieldWrapper}>
-                        <Text style={ForgetStyles.label}>E-mail</Text>
+                    <View style={authBaseStyles.fieldWrapper}>
+                        <Text style={authBaseStyles.label}>E-mail</Text>
                         <TextInput
-                            style={ForgetStyles.input}
+                            style={authBaseStyles.input}
                             placeholder="Enter your email"
                             placeholderTextColor="#999"
                             keyboardType="email-address"
@@ -61,13 +61,13 @@ const ForgetScreen = ({ navigation }: Props) => {
                 </View>
 
                 {/* Create Account Button */}
-                <TouchableOpacity style={ForgetStyles.ctaButton} onPress={handleSignUp}>
-                    <Text style={ForgetStyles.ctaText}>Reset Password</Text>
+                <TouchableOpacity style={authBaseStyles.ctaButton} onPress={handleSignUp}>
+                    <Text style={authBaseStyles.ctaText}>Reset Password</Text>
                 </TouchableOpacity>
-                <View style={ForgetStyles.altPromptRow}>
-                    <Text style={ForgetStyles.altPromptText}>Remember your password?</Text>
+                <View style={authBaseStyles.altPromptRow}>
+                    <Text style={authBaseStyles.altPromptText}>Remember your password?</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('SignIn')} activeOpacity={0.8}>
-                        <Text style={ForgetStyles.altPromptLink}>Sign In</Text>
+                        <Text style={authBaseStyles.altPromptLink}>Sign In</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

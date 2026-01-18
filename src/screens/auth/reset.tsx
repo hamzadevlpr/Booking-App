@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RootStackParamList } from '../../App';
 import SuccessModal from '../../components/SuccessModal';
-import { ResetStyles } from './style';
+import { authBaseStyles } from './style';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Reset'>;
 
@@ -34,26 +34,26 @@ const ResetScreen = ({ navigation }: Props) => {
     };
 
     return (
-        <View style={[ResetStyles.container, { paddingTop: insets.top }]}>
+        <View style={[authBaseStyles.container, { paddingTop: insets.top }]}>
             <StatusBar barStyle="dark-content" />
 
-            <ScrollView contentContainerStyle={ResetStyles.scrollContent}>
+            <ScrollView contentContainerStyle={authBaseStyles.scrollContent}>
                 {/* Header */}
-                <TouchableOpacity style={ResetStyles.backButton} onPress={() => navigation.goBack()}>
+                <TouchableOpacity style={authBaseStyles.backButton} onPress={() => navigation.goBack()}>
                     <Icon name="arrow-left" size={24} color="#000" />
                 </TouchableOpacity>
 
-                <Text style={ResetStyles.title}>Create a New Password</Text>
-                <Text style={ResetStyles.subtitle}>
+                <Text style={authBaseStyles.title}>Create a New Password</Text>
+                <Text style={authBaseStyles.subtitle}>
                     Enter your new password below to reset your account password.
                 </Text>
 
                 {/* Form */}
-                <View style={ResetStyles.fieldWrapper}>
-                    <Text style={ResetStyles.label}>Password</Text>
-                    <View style={ResetStyles.passwordContainer}>
+                <View style={authBaseStyles.fieldWrapper}>
+                    <Text style={authBaseStyles.label}>Password</Text>
+                    <View style={authBaseStyles.passwordContainer}>
                         <TextInput
-                            style={ResetStyles.passwordInput}
+                            style={authBaseStyles.passwordInput}
                             placeholder="Enter your password"
                             placeholderTextColor="#999"
                             secureTextEntry={!showPassword}
@@ -61,7 +61,7 @@ const ResetScreen = ({ navigation }: Props) => {
                             onChangeText={setPassword}
                         />
                         <TouchableOpacity
-                            style={ResetStyles.eyeButton}
+                            style={authBaseStyles.eyeButton}
                             onPress={() => setShowPassword(!showPassword)}
                         >
                             <Icon
@@ -72,11 +72,11 @@ const ResetScreen = ({ navigation }: Props) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={ResetStyles.fieldWrapper}>
-                    <Text style={ResetStyles.label}>New Password</Text>
-                    <View style={ResetStyles.passwordContainer}>
+                <View style={authBaseStyles.fieldWrapper}>
+                    <Text style={authBaseStyles.label}>New Password</Text>
+                    <View style={authBaseStyles.passwordContainer}>
                         <TextInput
-                            style={ResetStyles.passwordInput}
+                            style={authBaseStyles.passwordInput}
                             placeholder="Enter your new password"
                             placeholderTextColor="#999"
                             secureTextEntry={!showNewPassword}
@@ -84,7 +84,7 @@ const ResetScreen = ({ navigation }: Props) => {
                             onChangeText={setNewPassword}
                         />
                         <TouchableOpacity
-                            style={ResetStyles.eyeButton}
+                            style={authBaseStyles.eyeButton}
                             onPress={() => setShowNewPassword(!showNewPassword)}
                         >
                             <Icon
@@ -97,13 +97,13 @@ const ResetScreen = ({ navigation }: Props) => {
                 </View>
 
                 {/* Create Account Button */}
-                <TouchableOpacity style={ResetStyles.ctaButton} onPress={handleSignUp}>
-                    <Text style={ResetStyles.ctaText}>Reset Password</Text>
+                <TouchableOpacity style={authBaseStyles.ctaButton} onPress={handleSignUp}>
+                    <Text style={authBaseStyles.ctaText}>Reset Password</Text>
                 </TouchableOpacity>
-                <View style={ResetStyles.altPromptRow}>
-                    <Text style={ResetStyles.altPromptText}>Remember your password?</Text>
+                <View style={authBaseStyles.altPromptRow}>
+                    <Text style={authBaseStyles.altPromptText}>Remember your password?</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('SignIn')} activeOpacity={0.8}>
-                        <Text style={ResetStyles.altPromptLink}>Sign In</Text>
+                        <Text style={authBaseStyles.altPromptLink}>Sign In</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

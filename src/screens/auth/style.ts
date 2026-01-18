@@ -77,6 +77,12 @@ export const authBaseStyles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 22,
     },
+    ctaText: {
+        color: '#fff',
+        fontSize: 16,
+        fontFamily: FONTS.SEMI_BOLD,
+        paddingVertical: 14,
+    },
     orRow: {
         flexDirection: 'row',
         alignItems: 'center',

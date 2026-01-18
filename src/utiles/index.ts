@@ -93,7 +93,7 @@ export const mockBookingDetail = {
   id: '1',
   name: 'The Aston Villa Hotel',
   location: {
-    latitude:  52.509,
+    latitude: 52.509,
     longitude: -1.884,
     location: 'Rome, NY'
   },
@@ -137,3 +137,133 @@ export const mockBookingDetail = {
     }
   ]
 };
+
+export
+  const FACILITY_DATA = [
+    {
+      key: 'food',
+      title: 'Food and Drink',
+      count: 4,
+      icon: 'silverware-fork-knife',
+      details: [
+        'A la carte dinner',
+        'A la carte lunch',
+        'Breakfast',
+        'Vegetarian meal',
+      ],
+    },
+    {
+      key: 'transport',
+      title: 'Transportation',
+      count: 5,
+      icon: 'car',
+      details: [
+        'Airport shuttle',
+        'Car hire',
+        'Bicycle rental',
+        'Parking',
+        'Taxi service',
+      ],
+    },
+    {
+      key: 'general',
+      title: 'General',
+      count: 8,
+      icon: 'cog',
+      details: [
+        'Non-smoking rooms',
+        'Lift',
+        'Air conditioning',
+        'Heating',
+        'Family rooms',
+        'Soundproof rooms',
+        'Allergy-free room',
+        'Designated smoking area',
+      ],
+    },
+    {
+      key: 'hotel',
+      title: 'Hotel Service',
+      count: 2,
+      icon: 'bed',
+      details: [
+        '24-hour front desk',
+        'Room service',
+      ],
+    },
+    {
+      key: 'business',
+      title: 'Bussines Facilities',
+      count: 6,
+      icon: 'briefcase',
+      details: [
+        'Meeting/banquet facilities',
+        'Business centre',
+        'Fax/photocopying',
+        'Conference rooms',
+        'Projector',
+        'WiFi',
+      ],
+    },
+    {
+      key: 'nearby',
+      title: 'Nearby facilities',
+      count: 8,
+      icon: 'map-marker-radius',
+      details: [
+        'ATM',
+        'Shops',
+        'Supermarket',
+        'Pharmacy',
+        'Bank',
+        'Restaurant',
+        'Bar',
+        'Park',
+      ],
+    },
+    {
+      key: 'kids',
+      title: 'Kids',
+      count: 3,
+      icon: 'baby-face-outline',
+      details: [
+        'Kids club',
+        'Children playground',
+        'Babysitting',
+      ],
+    },
+    {
+      key: 'connectivity',
+      title: 'Connectivity',
+      count: 2,
+      icon: 'wifi',
+      details: [
+        'Free WiFi',
+        'Internet services',
+      ],
+    },
+    {
+      key: 'public',
+      title: 'Public Facilities',
+      count: 16,
+      icon: 'domain',
+      details: [
+        'Garden',
+        'Terrace',
+        'Sun terrace',
+        'Outdoor furniture',
+        'Shared lounge/TV area',
+        'Library',
+        'Chapel/shrine',
+        'Picnic area',
+        'BBQ facilities',
+        'Swimming pool',
+        'Fitness centre',
+        'Spa and wellness centre',
+        'Sauna',
+        'Hot tub/jacuzzi',
+        'Massage',
+        'Steam room',
+      ],
+    },
+  ];
