@@ -21,6 +21,8 @@ import PersonalInfoScreen from './screens/PersonalInfoScreen';
 import ReviewScreen from './screens/ReviewScreen';
 import FacilitiesAccordionScreen from './screens/FacilitiesAccordionScreen';
 import RequestToBookScreen from './screens/RequestToBookScreen';
+import ViewAllScreen from './screens/ViewAllScreen';
+import CheckoutScreen from './screens/CheckoutScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -36,6 +38,11 @@ export type RootStackParamList = {
   ReviewScreen: undefined;
   FacilitiesAccordionScreen: undefined;
   RequestToBookScreen: undefined;
+  ViewAllScreen: undefined;
+  CheckoutScreen: {
+    hotel: any;
+    booking: any;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -86,6 +93,16 @@ const App = () => {
             <Stack.Screen
               name="RequestToBookScreen"
               component={RequestToBookScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ViewAllScreen"
+              component={ViewAllScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CheckoutScreen"
+              component={CheckoutScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

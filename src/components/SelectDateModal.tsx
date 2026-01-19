@@ -1,15 +1,14 @@
 import { BlurView } from '@react-native-community/blur';
 import React, { useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import LeftIcon from "../assets/icons/left.svg"
-import RightIcon from "../assets/icons/right.svg"
+import LeftIcon from "../assets/icons/left.svg";
+import RightIcon from "../assets/icons/right.svg";
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 interface SelectDateModalProps {
   visible: boolean;
   onClose: () => void;
-  onApply: (dates: { checkIn: string; checkOut: string }) => void;
+  onApply: (dates: { checkIn: Date; checkOut: Date }) => void;
 }
 
 // Helper function types
@@ -46,15 +45,6 @@ const generateCalendarDays = (year: number, month: number): (number | null)[][] 
 
   return weeks;
 };
-
-const formatDate = (date: Date): string => {
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-};
-
 const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onApply }) => {
   const today = new Date();
 
@@ -151,8 +141,8 @@ const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onA
   const handleApply = () => {
     if (tempCheckIn && tempCheckOut) {
       onApply({
-        checkIn: formatDate(tempCheckIn),
-        checkOut: formatDate(tempCheckOut),
+        checkIn: tempCheckIn,
+        checkOut: tempCheckOut,
       });
       setCheckIn(tempCheckIn);
       setCheckOut(tempCheckOut);
@@ -180,15 +170,11 @@ const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onA
           {/* Month Navigation */}
           <View style={styles.monthRow}>
             <TouchableOpacity style={styles.arrowBtn} onPress={handlePrevMonth}>
-              <Text style={styles.arrow}>
-                <LeftIcon width={16} height={16} />
-              </Text>
+              <LeftIcon width={16} height={16} />
             </TouchableOpacity>
             <Text style={styles.monthText}>{monthName}</Text>
             <TouchableOpacity style={styles.arrowBtn} onPress={handleNextMonth}>
-              <Text style={styles.arrow}>
-                <RightIcon width={16} height={16} />
-              </Text>
+              <RightIcon width={16} height={16} />
             </TouchableOpacity>
           </View>
 
@@ -263,7 +249,8 @@ const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onA
       </View>
     </Modal>
   );
-}; const styles = StyleSheet.create({
+};
+const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -290,8 +277,8 @@ const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onA
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 17,
+    fontFamily: 'Poppins-Medium',
     color: '#000',
     marginBottom: 20,
   },
@@ -312,14 +299,9 @@ const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onA
     borderWidth: 1,
     borderColor: '#E9EBED',
   },
-  arrow: {
-    fontSize: 20,
-    color: '#333',
-    fontWeight: '600',
-  },
   monthText: {
     fontSize: 17,
-    fontWeight: '600',
+    fontFamily: 'Poppins-Medium',
     color: '#000',
     marginHorizontal: 24,
   },
@@ -330,23 +312,23 @@ const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onA
     marginBottom: 12,
   },
   dayOfWeek: {
-    width: 40,
     textAlign: 'center',
     fontSize: 13,
-    color: '#8A8A8E',
-    fontWeight: '500',
+    color: '#000000',
+    fontFamily: 'Poppins-Regular',
   },
   disabledDayText: {
+    fontFamily: 'Poppins-Regular',
     color: '#C0C0C0',
     opacity: 0.6,
   },
   selectedDayText: {
     color: 'white',
-    fontWeight: '600',
+    fontFamily: 'Poppins-Medium',
   },
   rangeDayText: {
     color: '#1E40AF',
-    fontWeight: '500',
+    fontFamily: 'Poppins-Regular',
   },
   calendarContainer: {
     width: '100%',
@@ -354,12 +336,11 @@ const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onA
   weekRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    gap: 0,
   },
   dayCell: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 42,
+    height: 42,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -367,7 +348,8 @@ const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onA
     backgroundColor: '#E8F0FE',
   },
   selectedDay: {
-    backgroundColor: '#1E40AF', // deep blue similar to screenshot
+    backgroundColor: '#1E40AF',
+    borderRadius: 8,
   },
   dayText: {
     fontSize: 16,
@@ -385,7 +367,7 @@ const SelectDateModal: React.FC<SelectDateModalProps> = ({ visible, onClose, onA
     alignItems: 'center',
   },
   cancelText: {
-    color: '#EF4444', // red like screenshot
+    color: '#EF4444',
     fontSize: 16,
     fontWeight: '600',
   },

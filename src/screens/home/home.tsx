@@ -201,8 +201,8 @@ const HomeScreen = ({ navigation }: any) => {
         {/* Recommended */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recommended for you</Text>
-          <TouchableOpacity>
-            <Text style={styles.sectionLink}>See All</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('ViewAllScreen')}>
+            <Text style={styles.sectionLink}>View All</Text>
           </TouchableOpacity>
         </View>
         <FlatList

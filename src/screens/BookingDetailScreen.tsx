@@ -24,7 +24,9 @@ const HEADER_HEIGHT = Platform.OS === 'ios' ? 88 : 72;
 const STATUS_BAR_HEIGHT =
   Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 24;
 
-const BookingDetailScreen = ({ navigation }: any) => {
+const BookingDetailScreen = ({ route, navigation }: any) => {
+  const { hotel } = route.params;
+  console.log('Hotel Details:', hotel);
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const data = mockBookingDetail;
@@ -67,10 +69,8 @@ const BookingDetailScreen = ({ navigation }: any) => {
         </TouchableOpacity>
 
         <View style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={styles.stickyTitle}>{data.name}</Text>
-          <Text style={styles.stickySubtitle}>
-            {data.location.location}
-          </Text>
+          <Text style={styles.stickyTitle}>{hotel.title}</Text>
+          <Text style={styles.stickySubtitle}>{hotel.location.location}</Text>
         </View>
 
         <Icon name="dots-vertical" size={22} color="#0F1831" />
@@ -87,7 +87,7 @@ const BookingDetailScreen = ({ navigation }: any) => {
       >
         {/* Header Image */}
         <View>
-          <Image source={{ uri: data.image }} style={styles.headerImage} />
+          <Image source={{ uri: hotel.image }} style={styles.headerImage} />
 
           {/* Image Header Buttons */}
           <View style={styles.imageHeader}>
@@ -108,15 +108,15 @@ const BookingDetailScreen = ({ navigation }: any) => {
 
         {/* Card */}
         <View style={styles.card}>
-          <Text style={styles.hotelName}>{data.name}</Text>
+          <Text style={styles.hotelName}>{hotel.title}</Text>
 
           <View style={styles.rowBetween}>
             <Text style={styles.locationText}>
-              {data.location.location}
+              {hotel.location.location}
             </Text>
             <View style={styles.row}>
               <Icon name="star" size={16} color="#FFB800" />
-              <Text style={styles.rating}>{data.rating}</Text>
+              <Text style={styles.rating}>{hotel.rating}</Text>
             </View>
           </View>
 
@@ -127,7 +127,7 @@ const BookingDetailScreen = ({ navigation }: any) => {
           </View>
 
           <View style={styles.facilitiesRow}>
-            {data.facilities.map(f => (
+            {hotel.facilities.map(f => (
               <View key={f.key} style={styles.facilityItem}>
                 <View style={styles.facilityIcon}>
                   {f.key === 'pool' ? (
@@ -150,7 +150,7 @@ const BookingDetailScreen = ({ navigation }: any) => {
           {/* Description */}
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.description} numberOfLines={descExpanded ? undefined : 3}>
-            {data.description}
+            {hotel.description}
             {!descExpanded && '... '}
             <Text style={styles.link} onPress={() => setDescExpanded(!descExpanded)}>
               {descExpanded ? 'Read Less' : 'Read More'}
@@ -165,21 +165,21 @@ const BookingDetailScreen = ({ navigation }: any) => {
 
           <View style={styles.mapBox}>
             <MapCard
-              latitude={data.location.latitude}
-              longitude={data.location.longitude}
+              latitude={hotel.location.latitude}
+              longitude={hotel.location.longitude}
             />
           </View>
 
-          <Text style={styles.address}>{data.address}</Text>
+          <Text style={styles.address}>{hotel.address}</Text>
 
-        {/* Reviews */}
+          {/* Reviews */}
           <View style={styles.reviewCard}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Reviews</Text>
               <Text style={styles.link} onPress={() => navigation.navigate('ReviewScreen')}>See All</Text>
             </View>
 
-            {data.reviews.map(r => (
+            {hotel.reviews.map(r => (
               <View key={r.id} style={styles.reviewRow}>
                 <Image source={{ uri: r.avatar }} style={styles.avatar} />
                 <View style={{ flex: 1 }}>
@@ -193,9 +193,9 @@ const BookingDetailScreen = ({ navigation }: any) => {
               </View>
             ))}
           </View>
-        
 
-        <View style={{ height: 40 }} />
+
+          <View style={{ height: 70 }} />
         </View>
       </Animated.ScrollView>
 
@@ -204,13 +204,13 @@ const BookingDetailScreen = ({ navigation }: any) => {
         <View>
           <Text style={styles.bottomLabel}>Price</Text>
           <Text style={styles.bottomPrice}>
-            ${data.price.toFixed(2)}
+            ${hotel.price}
           </Text>
         </View>
 
         <TouchableOpacity
           style={styles.bookBtn}
-          onPress={() => navigation.navigate('RequestToBookScreen')}
+          onPress={() => navigation.navigate('RequestToBookScreen', { hotel: hotel })}
         >
           <Text style={styles.bookText}>Booking Now</Text>
         </TouchableOpacity>
@@ -221,7 +221,7 @@ const BookingDetailScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F8FA',
+    backgroundColor: '#ffffff',
   },
 
   /* 🔹 Sticky Header */

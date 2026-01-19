@@ -1,0 +1,112 @@
+import { StyleSheet } from 'react-native';
+
+export default StyleSheet.create({
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    marginHorizontal: 0,
+    marginBottom: 8,
+    overflow: 'hidden',
+  },
+  imageWrap: {
+    width: '100%',
+    aspectRatio: 1.7,
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+  },
+  ratingBadge: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: '#FBBF24',
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    zIndex: 2,
+  },
+  ratingStar: {
+    marginRight: 2,
+  },
+  ratingText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 13,
+    marginLeft: 2,
+  },
+  heartBtn: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    borderRadius: 16,
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2,
+  },
+  infoWrap: {
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 12,
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+  },
+  name: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#222',
+    flex: 1,
+  },
+  price: {
+    color: '#2970D7',
+    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    marginLeft: 8,
+  },
+  location: {
+    color: '#878787',
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    flex: 1,
+  },
+  perNight: {
+    color: '#878787',
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    marginLeft: 8,
+  },
+  rowAmenities: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+  },
+  amenityIcon: {
+    marginRight: 4,
+  },
+  amenityText: {
+    color: '#262626',
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+  },
+  dot: {
+    color: '#8A8A8E',
+    fontSize: 18,
+    marginHorizontal: 4,
+    fontFamily: 'Poppins-SemiBold',
+  },
+});

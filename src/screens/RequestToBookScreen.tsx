@@ -4,28 +4,48 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CalenderIcon from "../assets/icons/calendar.svg"
 import WalletIcon from "../assets/icons/empty-wallet.svg"
 import SelectDateModal from '../components/SelectDateModal';
+import { differenceInDays, formatISO, isValid, parseISO } from 'date-fns';
 
-const RequestToBookScreen = ({ navigation }: any) => {
-    const [checkInDate, setCheckInDate] = useState('Select Date');
-    const [checkOutDate, setCheckOutDate] = useState('Select Date');
-    const [showCalendar, setShowCalendar] = useState(false);
-    const [guestCount, setGuestCount] = useState(1);
+const RequestToBookScreen = ({ navigation, route }: any) => {
+    const { hotel } = route.params;
+    const [showCalendar, setShowCalendar] = useState<boolean>(false);
+    const [checkInDate, setCheckInDate] = useState<string>('Select Date');
+    const [checkOutDate, setCheckOutDate] = useState<string>('Select Date');
+    const [guestCount, setGuestCount] = useState<number>(1);
 
     const handleDecrease = () => {
-        if (guestCount > 1) {
-            setGuestCount(prev => prev - 1);
-        }
+        if (guestCount > 1) setGuestCount((prev) => prev - 1);
     };
 
     const handleIncrease = () => {
-        if (guestCount < 6) {
-            setGuestCount(prev => prev + 1);
-        }
+        if (guestCount < 6) setGuestCount((prev) => prev + 1);
     };
 
-    const handleOpenCalendar = () => {
-        setShowCalendar(true);
-    }
+    // Pricing constants
+    const BASE_GUESTS = 1;
+    const EXTRA_GUEST_FEE_PER_NIGHT = 10; // $10 per extra guest per night
+    const CLEANING_FEE = 5;
+    const SERVICE_FEE = 5;
+
+    const getNights = () => {
+        if (checkInDate === 'Select Date' || checkOutDate === 'Select Date') return 0;
+
+        const start = parseISO(checkInDate);
+        const end = parseISO(checkOutDate);
+
+        if (!isValid(start) || !isValid(end)) return 0;
+
+        return Math.max(differenceInDays(end, start), 0);
+    };
+
+    const nights = getNights();
+
+    const extraGuests = Math.max(guestCount - BASE_GUESTS, 0);
+    const extraGuestCost = extraGuests * EXTRA_GUEST_FEE_PER_NIGHT * nights;
+
+    const baseStayPrice = hotel.price * nights;
+    const totalPayment = baseStayPrice + extraGuestCost + CLEANING_FEE + SERVICE_FEE;
+
     return (
         <View style={styles.container}>
             {/* Header */}
@@ -90,24 +110,60 @@ const RequestToBookScreen = ({ navigation }: any) => {
                 {/* Payment Details */}
                 <Text style={styles.label}>Payment Details</Text>
                 <View style={styles.payContainer}>
-                    <View style={styles.paymentRow}><Text style={styles.paymentLabel}>Total : 2 Night</Text><Text style={styles.paymentValue}>$400</Text></View>
-                    <View style={styles.paymentRow}><Text style={styles.paymentLabel}>Cleaning Fee</Text><Text style={styles.paymentValue}>$5</Text></View>
-                    <View style={styles.paymentRow}><Text style={styles.paymentLabel}>Service Fee</Text><Text style={styles.paymentValue}>$5</Text></View>
-                    <View style={styles.paymentRow}><Text style={styles.paymentTotalLabel}>Total Payment:</Text><Text style={styles.paymentTotalValue}>$410</Text></View>
+                    <View style={styles.paymentRow}>
+                        <Text style={styles.paymentLabel}>
+                            {nights} {nights === 1 ? 'Night' : 'Nights'} × ${hotel.price}
+                        </Text>
+                        <Text style={styles.paymentValue}>${baseStayPrice.toFixed(2)}</Text>
+                    </View>
+                    {extraGuests > 0 && (
+                        <View style={styles.paymentRow}>
+                            <Text style={styles.paymentLabel}>
+                                Extra Guests ({extraGuests}) × ${EXTRA_GUEST_FEE_PER_NIGHT} × {nights}
+                            </Text>
+                            <Text style={styles.paymentValue}>${extraGuestCost.toFixed(2)}</Text>
+                        </View>
+                    )}
+                    <View style={styles.paymentRow}>
+                        <Text style={styles.paymentLabel}>Cleaning Fee</Text>
+                        <Text style={styles.paymentValue}>${CLEANING_FEE.toFixed(2)}</Text>
+                    </View>
+
+                    <View style={styles.paymentRow}>
+                        <Text style={styles.paymentLabel}>Service Fee</Text>
+                        <Text style={styles.paymentValue}>${SERVICE_FEE.toFixed(2)}</Text>
+                    </View>
+
+                    <View style={styles.paymentRow}>
+                        <Text style={styles.paymentTotalLabel}>Total Payment:</Text>
+                        <Text style={styles.paymentTotalValue}>${totalPayment.toFixed(2)}</Text>
+                    </View>
                 </View>
             </ScrollView>
             {/* Checkout Button */}
             <View style={styles.checkoutBtnBox}>
-                <TouchableOpacity style={styles.checkoutBtn}>
+                <TouchableOpacity
+                    style={styles.checkoutBtn}
+                    onPress={() => navigation.navigate('CheckoutScreen', {
+                        hotel: hotel,
+                        booking: {
+                            checkInDate,
+                            checkOutDate,
+                            baseStayPrice,
+                            extraGuestCost,
+                            totalPayment,
+                        },
+                    })}
+                >
                     <Text style={styles.checkoutBtnText}>Checkout</Text>
                 </TouchableOpacity>
             </View>
             <SelectDateModal
                 visible={showCalendar}
                 onClose={() => setShowCalendar(false)}
-                onApply={({ checkIn, checkOut }: { checkIn: string; checkOut: string }) => {
-                    setCheckInDate(checkIn);
-                    setCheckOutDate(checkOut);
+                onApply={({ checkIn, checkOut }) => {
+                    setCheckInDate(formatISO(checkIn, { representation: 'date' }));
+                    setCheckOutDate(formatISO(checkOut, { representation: 'date' }));
                 }}
             />
         </View >
